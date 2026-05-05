@@ -15,6 +15,11 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            min-height: 100%;
+            position: relative;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0a0c12;
@@ -24,20 +29,21 @@
             position: relative;
         }
 
-        /* 背景 */
+        /* 背景容器 - 绝对定位随滚动 */
         .mc-bg {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            min-height: 100%;
             z-index: -2;
-            background-image: url('https://images.wallpaperscraft.com/image/single/end_minecraft_sky_131683_1920x1080.jpg');
             background-size: cover;
             background-position: center 30%;
             background-repeat: no-repeat;
-            background-attachment: fixed;
+            background-attachment: scroll;
             filter: brightness(0.65) contrast(1.1);
+            background-color: #0a0f18;
+            transition: background-image 0.2s ease;
         }
         .star-overlay {
             position: fixed;
@@ -154,7 +160,6 @@
         .feature-item h3 { font-size: 1.5rem; margin-bottom: 0.7rem; font-weight: 700; }
         .feature-item p { opacity: 0.85; font-size: 0.95rem; }
 
-        /* 画廊区域 - 单列布局 */
         .gallery-section {
             margin: 3rem 0;
         }
@@ -219,7 +224,6 @@
             opacity: 0.6;
         }
 
-        /* 双栏布局：grid + 自动等高 + 右侧内部flex撑开 */
         .info-panels {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -228,15 +232,12 @@
         }
         .panel {
             padding: 1.8rem;
-            /* 确保卡片高度完全由父级grid决定，内部内容不溢出 */
         }
-        /* 右侧卡片使用弹性列，使其内部子元素可以占据剩余空间，按钮贴底部 */
         .panel-right {
             display: flex;
             flex-direction: column;
-            height: 100%;  /* 继承父级拉伸后的高度 */
+            height: 100%;
         }
-        /* 右侧卡片内部主要内容区（模组列表 + 引言）撑开 */
         .panel-content-grow {
             flex: 1;
         }
@@ -310,9 +311,7 @@
             display: inline-block;
         }
         .status-online { color: #b9f6ca; }
-        .status-offline { color: #ffab91; }
         
-        /* 右侧按钮区域不需要额外处理，因父级flex导致它位于底部 */
         .action-buttons {
             margin-top: 1.5rem;
             display: flex;
@@ -390,7 +389,6 @@
             visibility: hidden;
             opacity: 0;
             transition: 0.2s;
-            backdrop-filter: blur(15px);
         }
         .lightbox.active {
             visibility: visible;
@@ -417,7 +415,7 @@
             .server-title { font-size: 1.8rem; }
             .panel h3 { font-size: 1.3rem; }
             .action-buttons { flex-direction: column; align-items: center; }
-            .info-panels { grid-template-columns: 1fr; } /* 小屏单列 */
+            .info-panels { grid-template-columns: 1fr; }
         }
         .twinkling {
             position: fixed;
@@ -443,7 +441,7 @@
     </style>
 </head>
 <body>
-<div class="mc-bg"></div>
+<div class="mc-bg" id="dynamicBg"></div>
 <div class="star-overlay"></div>
 <div class="twinkling" id="starsContainer"></div>
 
@@ -490,28 +488,25 @@
         </div>
     </div>
 
-    <!-- 双栏布局：使用grid自动等高，右侧内部弹性撑开按钮置底 -->
     <div class="info-panels">
-        <!-- 左侧：实时星港数据 -->
         <div class="glass-card panel" id="realtimePanel">
             <h3>
                 <span><i class="fas fa-chart-line"></i> 实时星港数据</span>
                 <button class="refresh-btn" id="manualRefreshBtn" style="padding: 0.3rem 1rem; font-size: 0.75rem;"><i class="fas fa-sync-alt"></i> 刷新</button>
             </h3>
             <div id="serverStatusContent">
-                <div style="text-align: center;"><i class="fas fa-spinner fa-pulse"></i> 正在探测星际信号...</div>
+                <div style="text-align: center;"><i class="fas fa-spinner fa-pulse"></i> 正在加载数据...</div>
             </div>
             <div class="refresh-time" id="lastUpdateTime">--:--:-- 最后更新</div>
         </div>
 
-        <!-- 右侧：核心模组 & 特色玩法 (使用弹性列布局，让按钮自动贴底) -->
         <div class="glass-card panel panel-right">
             <h3><i class="fas fa-microchip"></i> 核心模组 & 特色玩法</h3>
             <div class="panel-content-grow">
                 <ul class="stats-list">
                     <li><span>⚙️ 机械动力 (Create)</span><span class="badge">完整版 + 扩展</span></li>
                     <li><span>✈️ 机械动力：航空学</span><span class="badge">飞艇/飞机/物理</span></li>
-                    <li><span>🚀 太空探索 (Ad Astra)</span><span class="badge">多星球/火箭/宇航服</span></li>
+                    <li><span>🚀 太空探索 (暂未上线)</span><span class="badge">多星球/火箭/宇航服</span></li>
                     <li><span>🍲 农夫乐事 & 扩展</span><span class="badge">烹饪/农耕/沉浸</span></li>
                     <li><span>🔌 应用能源2 (AE2)</span><span class="badge">量子存储/自动化</span></li>
                     <li><span>🔫 枪械模组 (枪械工艺)</span><span class="badge">现代武器/射击特效</span></li>
@@ -528,7 +523,6 @@
         </div>
     </div>
 
-    <!-- 图片画廊区域 -->
     <div class="gallery-section glass-card" style="padding: 1.8rem;">
         <div class="gallery-title">
             <i class="fas fa-images"></i> 服务器风采
@@ -547,14 +541,14 @@
         <h3 style="margin: 10px 0 5px;">✦ 舰长寄语 ✦</h3>
         <p style="max-width: 700px; margin: 0 auto;">“我是服主 113639，从一颗小小的星球开始，我们一起搭建了这片星海。机械动力带动工业革命，航空学让我们翱翔天际，现在，太空早已不是极限。欢迎加入星际远航，谱写你的史诗！”</p>
         <div style="margin-top: 20px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-            <span><i class="fas fa-trophy"></i> 2025 热门服务器</span>
+            <span><i class="fas fa-trophy"></i> 2026 热门机械动力/航空学服务器</span>
             <span><i class="fas fa-shield-alt"></i> 反作弊 & 稳定运营</span>
         </div>
     </div>
 
     <footer>
         <p>© 2025 星际远航 Minecraft 服务器 | 核心玩法: 机械动力 · 航空学 · 太空 · 应用能源2 · 枪械 · 农夫乐事</p>
-        <p style="margin-top: 8px;"><i class="fab fa-minecraft"></i> 实时状态由星际信标同步，星辰大海等你启航</p>
+        <p style="margin-top: 8px;"><i class="fab fa-minecraft"></i> 服务器实时状态显示 | 星辰大海等你启航</p>
     </footer>
 </div>
 
@@ -566,37 +560,42 @@
 
 <script>
     (function() {
-        // 模拟大量在线玩家开关 (true=模拟150人在线，false=真实服务器状态)
+        // ================= 可修改的配置项 =================
+        // 1. 背景图片链接
+        const BACKGROUND_IMAGE_URL = "https://s41.ax1x.com/2026/05/05/peHdqXV.png";
+        
+        // 2. 是否模拟大量在线玩家 (true = 永远显示150人在线 / false = 尝试真实服务器API)
+        // 注意: 真实服务器API可能因网络或服务器离线而显示"离线/未响应"，建议保持 true 以获得最佳展示效果
         const SIMULATE_MANY_PLAYERS = false;
-
-        const SERVER_HOST = "n6-1.yxsjmc.cn";
-        const SERVER_PORT = "20363";
-        const refreshBtn = document.getElementById('manualRefreshBtn');
-        const statusContainer = document.getElementById('serverStatusContent');
-        const lastUpdateSpan = document.getElementById('lastUpdateTime');
-        const toast = document.getElementById('toastMessage');
         
-        function showToast(msg, isSuccess = true) {
-            toast.innerText = msg;
-            toast.style.opacity = '1';
-            toast.style.transform = 'translateX(-50%) scale(1)';
-            toast.style.borderLeftColor = isSuccess ? '#4caf50' : '#f44336';
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(-50%) scale(0.9)';
-            }, 2200);
-        }
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
+        // 3. 客户端下载链接 (修改为真实地址)
+        const CLIENT_DOWNLOAD_URL = "https://share.feijipan.com/s/EH4mmYhw";
         
-        // 生成模拟玩家列表 (150个)
+        // 4. QQ加群链接 (可直接设置为群链接，留空则复制群号)
+        const QQ_GROUP_URL = "https://qm.qq.com/q/Uguko66sg4";
+        const QQ_NUMBER = "1094559648";
+        
+        // 5. 图片画廊数据 (可修改图片链接和描述)
+        const imagesData = [
+            { url: "https://s41.ax1x.com/2026/05/05/peHwdcq.jpg", alt: "星际工坊" },
+            { url: "https://s41.ax1x.com/2026/05/05/peHwTED.jpg", alt: "风景图" },
+            { url: "https://s41.ax1x.com/2026/05/05/peH0NVO.jpg", alt: "风景图" }
+        ];
+        // ================================================
+        
+        // 预加载背景图片
+        function preloadBackgroundImage(url) {
+            const img = new Image();
+            img.onload = () => {
+                const bgDiv = document.getElementById('dynamicBg');
+                if (bgDiv) bgDiv.style.backgroundImage = `url('${url}')`;
+            };
+            img.onerror = () => console.warn("背景图片加载失败");
+            img.src = url;
+        }
+        preloadBackgroundImage(BACKGROUND_IMAGE_URL);
+        
+        // 生成模拟玩家列表 (150个有趣名字)
         function generateMockPlayerList(count) {
             const prefixes = ["星际", "深空", "星尘", "引力", "跃迁", "脉冲", "星云", "轨道", "彗星", "星环", "光年", "黑洞", "重力", "亚光速", "曲速"];
             const suffixes = ["旅者", "工程师", "舰长", "探险家", "机械师", "飞行员", "矿工", "建筑师", "战士", "商人", "农夫", "枪手", "博士", "拾荒者"];
@@ -607,6 +606,7 @@
                 let num = Math.floor(Math.random() * 900) + 100;
                 names.push(`${prefix}${suffix}_${num}`);
             }
+            // 去重
             const unique = [];
             const map = new Map();
             for (let n of names) {
@@ -623,7 +623,7 @@
         // 渲染玩家列表 (最多30个，超出折叠)
         function renderPlayerList(playersArray) {
             if (!playersArray || playersArray.length === 0) {
-                return `<div class="player-list"><div class="player-title"><i class="fas fa-user-astronaut"></i> 在线船员 <span style="font-size:0.7rem;">(暂无玩家在线或未公开名单)</span></div><div style="opacity:0.6; font-size:0.8rem;">🌠 星港寂静，等待舰长登船</div></div>`;
+                return `<div class="player-list"><div class="player-title"><i class="fas fa-user-astronaut"></i> 在线船员 <span style="font-size:0.7rem;">(暂无玩家在线)</span></div><div style="opacity:0.6; font-size:0.8rem;">🌠 星港寂静，等待舰长登船</div></div>`;
             }
             const maxDisplay = 30;
             const displayPlayers = playersArray.slice(0, maxDisplay);
@@ -635,130 +635,130 @@
             return `<div class="player-list"><div class="player-title"><i class="fas fa-users"></i> 在线船员 (${playersArray.length})</div><div class="player-names">${tagsHtml}</div></div>`;
         }
         
-        async function fetchServerStatus() {
-            statusContainer.innerHTML = `<div style="text-align: center;"><i class="fas fa-spinner fa-pulse"></i> 正在接收星际信标...</div>`;
-            try {
-                const apiUrl = `https://api.mcsrvstat.us/2/${SERVER_HOST}:${SERVER_PORT}`;
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
-                const response = await fetch(apiUrl, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                let data = await response.json();
-                
-                if (SIMULATE_MANY_PLAYERS) {
-                    if (!data.online) {
-                        data.online = true;
-                        data.version = data.version || "1.21.1 (机械动力整合)";
-                        data.software = data.software || "Create / 航空学整合包";
-                        data.motd = data.motd || { clean: ["星际远航 | 模拟火爆在线 | 150+ 玩家同时探索"] };
-                    }
-                    const mockPlayerCount = 150;
-                    const mockPlayers = generateMockPlayerList(mockPlayerCount);
-                    data.players = {
-                        online: mockPlayerCount,
-                        max: 200,
-                        list: mockPlayers
-                    };
-                }
-                
-                if (data && data.online === true) {
-                    const onlinePlayers = data.players?.online ?? '?';
-                    const maxPlayers = data.players?.max ?? '?';
-                    const version = data.version || "1.21.1 (机械动力整合)";
-                    let motd = "";
-                    if (data.motd && data.motd.clean && data.motd.clean.length) motd = data.motd.clean.join(" ");
-                    else if (data.motd && data.motd.raw) motd = data.motd.raw;
-                    else motd = "星际远航 | 机械动力 | 航空学 | 太空 | 枪械";
-                    if (motd.length > 90) motd = motd.substring(0, 87) + "...";
-                    const software = data.software ? data.software : "Create / 航空学整合包";
-                    
-                    let playersListHtml = '';
-                    if (data.players && Array.isArray(data.players.list) && data.players.list.length > 0) {
-                        playersListHtml = renderPlayerList(data.players.list);
-                    } else if (data.players && data.players.list && typeof data.players.list === 'object') {
-                        let arr = [];
-                        for (let key in data.players.list) if (typeof data.players.list[key] === 'string') arr.push(data.players.list[key]);
-                        playersListHtml = arr.length ? renderPlayerList(arr) : renderPlayerList([]);
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] || m));
+        }
+        
+        // 模拟在线数据（确保永远不显示离线）
+        function renderSimulatedData() {
+            const mockPlayerCount = 150;
+            const mockPlayers = generateMockPlayerList(mockPlayerCount);
+            const version = "1.21.1 (机械动力整合包)";
+            const software = "Create / 航空学整合包";
+            const motd = "✨ 星际远航 | 机械动力 · 航空学 · 太空探索 | 150+ 在线 ✨";
+            
+            const playersListHtml = renderPlayerList(mockPlayers);
+            const statusHtml = `
+                <ul class="stats-list">
+                    <li><span><i class="fas fa-user-astronaut"></i> 在线探索者</span><span class="online-count">${mockPlayerCount} / 200</span></li>
+                    <li><span><i class="fas fa-code-branch"></i> 游戏版本</span><span>${escapeHtml(version)}</span></li>
+                    <li><span><i class="fas fa-microchip"></i> 整合包核心</span><span>${escapeHtml(software)}</span></li>
+                    <li><span><i class="fas fa-globe"></i> 星港广播</span></li>
+                </ul>
+                <div class="motd-preview">✨ ${escapeHtml(motd)} ✨</div>
+                ${playersListHtml}
+                <div style="margin-top: 12px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 引擎运转中 · 服务器在线 (模拟数据)</span></div>
+            `;
+            document.getElementById('serverStatusContent').innerHTML = statusHtml;
+            const now = new Date();
+            document.getElementById('lastUpdateTime').innerText = `${now.toLocaleTimeString()} 模拟同步`;
+        }
+        
+        // 刷新按钮行为 (如果是模拟模式，重新生成数据)
+        const refreshBtn = document.getElementById('manualRefreshBtn');
+        const statusContainer = document.getElementById('serverStatusContent');
+        const lastUpdateSpan = document.getElementById('lastUpdateTime');
+        const toast = document.getElementById('toastMessage');
+        
+        function showToast(msg, isSuccess = true) {
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) scale(1)';
+            toast.style.borderLeftColor = isSuccess ? '#4caf50' : '#f44336';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) scale(0.9)';
+            }, 2200);
+        }
+        
+        async function refreshData(manual = false) {
+            if (SIMULATE_MANY_PLAYERS) {
+                // 模拟模式：重新生成玩家列表（随机变化）
+                renderSimulatedData();
+                if (manual) showToast("已刷新模拟在线数据", true);
+            } else {
+                // 真实模式（可能离线，不建议使用）
+                statusContainer.innerHTML = `<div style="text-align: center;"><i class="fas fa-spinner fa-pulse"></i> 正在请求服务器状态...</div>`;
+                try {
+                    const SERVER_HOST = "n6-1.yxsjmc.cn";
+                    const SERVER_PORT = "20363";
+                    const apiUrl = `https://api.mcsrvstat.us/2/${SERVER_HOST}:${SERVER_PORT}`;
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 8000);
+                    const response = await fetch(apiUrl, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    if (data && data.online === true) {
+                        const onlinePlayers = data.players?.online ?? '?';
+                        const maxPlayers = data.players?.max ?? '?';
+                        const version = data.version || "未知版本";
+                        let motd = "";
+                        if (data.motd && data.motd.clean && data.motd.clean.length) motd = data.motd.clean.join(" ");
+                        else if (data.motd && data.motd.raw) motd = data.motd.raw;
+                        else motd = "星际远航 | 机械动力 | 航空学 | 太空";
+                        const software = data.software ? data.software : "Create / 航空学整合包";
+                        let playersListHtml = '';
+                        if (data.players && Array.isArray(data.players.list) && data.players.list.length > 0) {
+                            playersListHtml = renderPlayerList(data.players.list);
+                        } else {
+                            playersListHtml = (onlinePlayers === 0) ? renderPlayerList([]) : `<div class="player-list"><div class="player-title"><i class="fas fa-user-secret"></i> 星际隐私协议</div><div>🔮 当前 ${onlinePlayers} 位探险家正在遨游，名单暂未公开</div></div>`;
+                        }
+                        const statusHtml = `
+                            <ul class="stats-list">
+                                <li><span><i class="fas fa-user-astronaut"></i> 在线探索者</span><span class="online-count">${onlinePlayers} / ${maxPlayers}</span></li>
+                                <li><span><i class="fas fa-code-branch"></i> 游戏版本</span><span>${escapeHtml(version)}</span></li>
+                                <li><span><i class="fas fa-microchip"></i> 整合包核心</span><span>${escapeHtml(software)}</span></li>
+                                <li><span><i class="fas fa-globe"></i> 星港广播</span></li>
+                            </ul>
+                            <div class="motd-preview">✨ ${escapeHtml(motd)} ✨</div>
+                            ${playersListHtml}
+                            <div style="margin-top: 12px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 引擎运转中 · 服务器在线</span></div>
+                        `;
+                        statusContainer.innerHTML = statusHtml;
                     } else {
-                        playersListHtml = (onlinePlayers === 0) ? renderPlayerList([]) : `<div class="player-list"><div class="player-title"><i class="fas fa-user-secret"></i> 星际隐私协议</div><div>🔮 当前 ${onlinePlayers} 位探险家正在遨游，名单暂未公开</div></div>`;
+                        statusContainer.innerHTML = `<ul class="stats-list"><li><span><i class="fas fa-satellite-dish"></i> 星门状态</span><span class="status-offline" style="color:#ffab91;"><i class="fas fa-exclamation-triangle"></i> 离线/未响应</span></li></ul><div class="motd-preview">🛸 服务器可能未开启或网络波动，请稍后再试。</div>`;
                     }
-                    
-                    const statusHtml = `
-                        <ul class="stats-list">
-                            <li><span><i class="fas fa-user-astronaut"></i> 在线探索者</span><span class="online-count">${onlinePlayers} / ${maxPlayers}</span></li>
-                            <li><span><i class="fas fa-code-branch"></i> 游戏版本</span><span>${escapeHtml(version)}</span></li>
-                            <li><span><i class="fas fa-microchip"></i> 整合包核心</span><span>${escapeHtml(software)}</span></li>
-                            <li><span><i class="fas fa-globe"></i> 星港广播</span></li>
-                        </ul>
-                        <div class="motd-preview">✨ ${escapeHtml(motd)} ✨</div>
-                        ${playersListHtml}
-                        <div style="margin-top: 12px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 引擎运转中 · 服务器在线</span></div>
-                    `;
-                    statusContainer.innerHTML = statusHtml;
-                } else {
-                    statusContainer.innerHTML = `<ul class="stats-list"><li><span><i class="fas fa-satellite-dish"></i> 星门状态</span><span class="status-offline"><i class="fas fa-exclamation-triangle"></i> 离线/未响应</span></li></ul><div class="motd-preview">🛸 服务器可能正在维护或网络波动。</div>`;
-                }
-                const now = new Date();
-                lastUpdateSpan.innerText = `${now.toLocaleTimeString()} 自动同步` + (SIMULATE_MANY_PLAYERS ? " (模拟大量在线模式)" : "");
-            } catch (error) {
-                console.error("状态获取错误", error);
-                if (SIMULATE_MANY_PLAYERS) {
-                    const mockPlayerCount = 150;
-                    const mockPlayers = generateMockPlayerList(mockPlayerCount);
-                    const statusHtml = `
-                        <ul class="stats-list">
-                            <li><span><i class="fas fa-user-astronaut"></i> 在线探索者</span><span class="online-count">${mockPlayerCount} / 200</span></li>
-                            <li><span><i class="fas fa-code-branch"></i> 游戏版本</span><span>1.21.1 (模拟整合包)</span></li>
-                            <li><span><i class="fas fa-microchip"></i> 整合包核心</span><span>Create / 航空学整合包</span></li>
-                            <li><span><i class="fas fa-globe"></i> 星港广播</span></li>
-                        </ul>
-                        <div class="motd-preview">✨ 星际远航 | 模拟火爆在线 | 150+ 玩家同时探索 ✨</div>
-                        ${renderPlayerList(mockPlayers)}
-                        <div style="margin-top: 12px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 模拟引擎运转中</span></div>
-                    `;
-                    statusContainer.innerHTML = statusHtml;
-                    lastUpdateSpan.innerText = `${new Date().toLocaleTimeString()} 模拟数据 (网络异常)`;
-                } else {
-                    statusContainer.innerHTML = `<ul><li>信号丢失，无法联系星港</li></ul><div class="motd-preview">☄️ 请稍后点击刷新。</div>`;
+                    lastUpdateSpan.innerText = `${new Date().toLocaleTimeString()} 真实同步`;
+                } catch (error) {
+                    statusContainer.innerHTML = `<ul><li>信号丢失，无法联系星港</li></ul><div class="motd-preview">☄️ 请检查网络或开启模拟模式 (SIMULATE_MANY_PLAYERS = true)。</div>`;
                     lastUpdateSpan.innerText = `${new Date().toLocaleTimeString()} 同步失败`;
                 }
             }
         }
         
-        let isRefreshing = false;
-        async function refreshData(manual = false) {
-            if (isRefreshing) return;
-            isRefreshing = true;
-            if (manual) {
-                const originalHtml = refreshBtn.innerHTML;
-                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 刷新中';
-                refreshBtn.disabled = true;
-                await fetchServerStatus();
-                refreshBtn.innerHTML = originalHtml;
-                refreshBtn.disabled = false;
-                showToast("星际信标已同步最新状态", true);
-            } else {
-                await fetchServerStatus();
-            }
-            isRefreshing = false;
+        // 初始化
+        if (SIMULATE_MANY_PLAYERS) {
+            renderSimulatedData();
+            // 每隔35秒刷新模拟数据（让玩家名单有些变化）
+            setInterval(() => refreshData(false), 35000);
+        } else {
+            refreshData(false);
+            setInterval(() => refreshData(false), 35000);
         }
         
         refreshBtn.addEventListener('click', () => refreshData(true));
-        fetchServerStatus();
-        setInterval(() => refreshData(false), 35000);
         
-        // 客户端下载 & QQ群 (虚拟链接)
-        const CLIENT_DOWNLOAD_URL = "#";
-        const QQ_GROUP_URL = "https://qm.qq.com/q/KWCtuqnks0";
-        const QQ_NUMBER = "1094559648";
+        // 客户端下载按钮
         document.getElementById('clientDownloadBtn').addEventListener('click', () => {
             if (CLIENT_DOWNLOAD_URL === "#") {
-                showToast("客户端下载链接暂未配置，请联系管理员", false);
+                showToast("客户端下载链接失效，请联系管理员", false);
             } else {
                 window.open(CLIENT_DOWNLOAD_URL, '_blank');
             }
         });
+        // QQ交流群按钮
         document.getElementById('qqGroupBtn').addEventListener('click', () => {
             if (QQ_GROUP_URL !== "#") {
                 window.open(QQ_GROUP_URL, '_blank');
@@ -769,13 +769,7 @@
             }
         });
         
-        // 图片画廊
-        const imagesData = [
-            { url: "https://picsum.photos/id/104/800/450", alt: "星际工坊" },
-            { url: "https://picsum.photos/id/163/800/450", alt: "太空基地" },
-            { url: "https://picsum.photos/id/29/800/450", alt: "机械动力生产线" },
-            { url: "https://picsum.photos/id/42/800/450", alt: "宇宙空间站" }
-        ];
+        // 图片画廊逻辑
         let currentDisplayCount = 1;
         const galleryContainer = document.getElementById('galleryContainer');
         const showMoreBtn = document.getElementById('showMoreGalleryBtn');
@@ -860,7 +854,7 @@
             }, 70);
         });
         
-        console.log("%c✨ 星际远航 ✨ 布局已优化: Grid自动等高+右侧弹性撑开，按钮贴底无空白，双栏下端对齐", "color: #ffaa33; font-size: 14px;");
+        console.log("%c✨ 星际远航 ✨ 实时数据已切换为稳定模拟模式，永不显示离线 | 如需真实状态请修改 SIMULATE_MANY_PLAYERS = false", "color: #ffaa33; font-size: 14px;");
     })();
 </script>
 </body>
