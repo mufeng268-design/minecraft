@@ -696,7 +696,7 @@
                 statusContainer.innerHTML = `<div style="text-align: center;"><i class="fas fa-spinner fa-pulse"></i> 正在请求服务器状态...</div>`;
                 try {
                     const SERVER_HOST = "n6-1.yxsjmc.cn";
-                    const SERVER_PORT = "20363";
+                    const SERVER_PORT = "20055";
                     const apiUrl = `https://api.mcsrvstat.us/2/${SERVER_HOST}:${SERVER_PORT}`;
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 8000);
