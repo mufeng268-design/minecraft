@@ -8,42 +8,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="">
     <style>
+        :root {
+            --bg-deep: #060a14;
+            --gold: #f0b940;
+            --gold-light: #ffd26e;
+            --accent-blue: #6bc5ff;
+            --accent-green: #5ef08a;
+            --text-primary: #e8eef7;
+            --text-secondary: #b0c4de;
+            --radius-xl: 28px;
+            --shadow-glow: 0 16px 40px rgba(0, 0, 0, 0.55);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
+        html {
+            font-size: 19px;
+        }
+
+        html,
+        body {
             min-height: 100%;
             position: relative;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0c12;
-            color: #f0f3fa;
-            line-height: 1.5;
             scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.6;
             position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 背景容器 - 绝对定位随滚动 */
+        /* 背景层 */
         .mc-bg {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            min-height: 100%;
-            z-index: -2;
+            height: 100%;
+            z-index: -3;
             background-size: cover;
-            background-position: center 30%;
+            background-position: center 35%;
             background-repeat: no-repeat;
-            background-attachment: scroll;
-            filter: brightness(0.65) contrast(1.1);
-            background-color: #0a0f18;
-            transition: background-image 0.2s ease;
+            filter: brightness(0.55) contrast(1.08) saturate(0.9);
+            background-color: #060d1a;
+            transition: background-image 0.3s ease;
         }
         .star-overlay {
             position: fixed;
@@ -51,371 +69,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+            z-index: -2;
+            background: radial-gradient(ellipse at 50% 25%, rgba(10, 30, 60, 0.25) 0%, rgba(0, 0, 0, 0.65) 80%);
             pointer-events: none;
-        }
-        .glass-card {
-            background: rgba(15, 25, 35, 0.65);
-            backdrop-filter: blur(12px);
-            border-radius: 32px;
-            border: 1px solid rgba(100, 200, 255, 0.25);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .glass-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(100, 200, 255, 0.4) inset;
-            border-color: rgba(88, 166, 255, 0.5);
-        }
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
-            position: relative;
-            z-index: 2;
-        }
-        .hero {
-            text-align: center;
-            margin: 2rem 0 2rem 0;
-            padding: 2rem 1.5rem;
-        }
-        .server-title {
-            font-family: 'Press Start 2P', cursive;
-            font-size: clamp(2.2rem, 8vw, 4.5rem);
-            background: linear-gradient(135deg, #FFD966, #FFB347, #C0E0FF);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 15px rgba(0, 160, 255, 0.5);
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-        }
-        .server-sub {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            background: rgba(0, 0, 0, 0.5);
-            display: inline-block;
-            padding: 0.4rem 1.2rem;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-            margin-top: 0.5rem;
-        }
-        .owner-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            padding: 0.6rem 1.6rem;
-            border-radius: 60px;
-            margin-top: 1.8rem;
-            font-size: 1rem;
-            border: 1px solid rgba(255,215,0,0.4);
-        }
-        .owner-badge i { color: #ffcc44; font-size: 1.3rem; }
-        .owner-badge span { font-weight: 600; letter-spacing: 1px; }
-        .owner-badge strong { color: #ffcc66; font-size: 1.2rem; margin-left: 6px; }
-
-        .version-info {
-            margin: 1rem auto 2rem auto;
-            max-width: 650px;
-            text-align: center;
-        }
-        .version-badge {
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 0.8rem 1.8rem;
-            border: 1px solid rgba(90, 200, 250, 0.5);
-            display: inline-block;
-            font-size: 1rem;
-        }
-        .version-badge i { margin-right: 8px; color: #6bc9ff; }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2rem;
-            margin: 4rem 0;
-        }
-        .feature-item {
-            padding: 2rem 1.5rem;
-            text-align: center;
-        }
-        .feature-icon {
-            font-size: 2.8rem;
-            background: rgba(255, 200, 100, 0.2);
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.3rem;
-            border-radius: 50%;
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 200, 80, 0.5);
-            color: #FFD966;
-        }
-        .feature-item h3 { font-size: 1.5rem; margin-bottom: 0.7rem; font-weight: 700; }
-        .feature-item p { opacity: 0.85; font-size: 0.95rem; }
-
-        .gallery-section {
-            margin: 3rem 0;
-        }
-        .gallery-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 5px solid #ffaa33;
-            padding-left: 20px;
-        }
-        .gallery-single-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        .gallery-item {
-            width: 100%;
-            background: rgba(10, 20, 30, 0.6);
-            border-radius: 28px;
-            overflow: hidden;
-            border: 1px solid rgba(255,200,100,0.3);
-            transition: 0.2s;
-        }
-        .gallery-item img {
-            width: 100%;
-            display: block;
-            cursor: pointer;
-            transition: 0.2s;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-        }
-        .gallery-item img:hover {
-            transform: scale(1.01);
-        }
-        .show-more-btn {
-            margin-top: 2rem;
-            text-align: center;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #2c5f8a, #1e3a5f);
-            padding: 0.7rem 1.8rem;
-            border-radius: 60px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            border: none;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #3a7caa, #2a4c74);
-            transform: translateY(-2px);
-        }
-        .image-note {
-            margin-top: 1rem;
-            text-align: center;
-            font-size: 0.7rem;
-            opacity: 0.6;
-        }
-
-        .info-panels {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-        .panel {
-            padding: 1.8rem;
-        }
-        .panel-right {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .panel-content-grow {
-            flex: 1;
-        }
-        .panel h3 {
-            font-size: 1.6rem;
-            border-left: 5px solid #ffaa33;
-            padding-left: 15px;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        .stats-list { list-style: none; }
-        .stats-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.2);
-            align-items: baseline;
-        }
-        .badge {
-            background: #1e4660;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        .online-count { font-weight: bold; color: #6eff8e; font-size: 1.2rem; }
-        .player-list {
-            margin-top: 1rem;
-            background: rgba(0, 0, 0, 0.35);
-            border-radius: 24px;
-            padding: 1rem;
-        }
-        .player-title {
-            font-size: 0.9rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #bbd9ff;
-        }
-        .player-names { display: flex; flex-wrap: wrap; gap: 8px; }
-        .player-tag {
-            background: rgba(30, 144, 210, 0.6);
-            backdrop-filter: blur(2px);
-            padding: 0.2rem 0.8rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-family: monospace;
-            font-weight: 500;
-            border: 1px solid #5bc0ff;
-        }
-        .motd-preview {
-            background: rgba(0,0,0,0.4);
-            border-radius: 16px;
-            padding: 0.6rem 1rem;
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            word-break: break-word;
-            color: #ffecb3;
-        }
-        .refresh-time { font-size: 0.7rem; opacity: 0.7; margin-top: 1rem; text-align: right; }
-        .server-status-badge {
-            background: #2e7d64;
-            border-radius: 30px;
-            padding: 0.2rem 0.8rem;
-            font-size: 0.7rem;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .status-online { color: #b9f6ca; }
-        
-        .action-buttons {
-            margin-top: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .action-btn {
-            background: rgba(30, 60, 90, 0.9);
-            backdrop-filter: blur(4px);
-            padding: 0.6rem 1.4rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: none;
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .action-btn:hover {
-            background: #1e88e5;
-            transform: translateY(-2px);
-        }
-
-        .owner-message {
-            margin: 2rem 0;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 32px;
-            padding: 1.8rem 2rem;
-            text-align: center;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 180, 60, 0.3);
-        }
-        footer {
-            margin-top: 4rem;
-            text-align: center;
-            font-size: 0.85rem;
-            opacity: 0.7;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 2rem;
-        }
-        .toast-msg {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) scale(0.9);
-            background: #1e2a36e6;
-            backdrop-filter: blur(10px);
-            padding: 12px 24px;
-            border-radius: 60px;
-            color: #fff;
-            font-weight: 500;
-            z-index: 999;
-            transition: all 0.2s;
-            opacity: 0;
-            pointer-events: none;
-            border-left: 4px solid #4caf50;
-            font-size: 0.9rem;
-        }
-
-        .lightbox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.2s;
-        }
-        .lightbox.active {
-            visibility: visible;
-            opacity: 1;
-        }
-        .lightbox img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 20px;
-            border: 2px solid #ffcc66;
-        }
-        .close-lightbox {
-            position: absolute;
-            top: 25px;
-            right: 35px;
-            font-size: 40px;
-            color: white;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        @media (max-width: 680px) {
-            .container { padding: 1rem 1rem 3rem; }
-            .server-title { font-size: 1.8rem; }
-            .panel h3 { font-size: 1.3rem; }
-            .action-buttons { flex-direction: column; align-items: center; }
-            .info-panels { grid-template-columns: 1fr; }
         }
         .twinkling {
             position: fixed;
@@ -429,437 +85,1335 @@
         }
         .twinkling i {
             position: absolute;
-            background: white;
+            background: #fff;
             border-radius: 50%;
-            opacity: 0.5;
+            opacity: 0.45;
             animation: blink 3s infinite alternate;
+            will-change: opacity, transform;
         }
         @keyframes blink {
-            0% { opacity: 0.1; transform: scale(1);}
-            100% { opacity: 0.9; transform: scale(1.2);}
+            0% {
+                opacity: 0.08;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 0.9;
+                transform: scale(1.3);
+            }
+        }
+
+        /* UI 元素 */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f0a830, #ffd26e, #f0a830);
+            z-index: 110;
+            width: 0%;
+            transition: width 0.12s linear;
+            border-radius: 0 2px 2px 0;
+            box-shadow: 0 0 14px rgba(240, 184, 64, 0.6);
+        }
+        .scroll-to-top {
+            position: fixed;
+            bottom: 130px;
+            right: 28px;
+            z-index: 90;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(16, 28, 50, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(120, 200, 255, 0.4);
+            color: #c8e0ff;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(16px);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .scroll-to-top:hover {
+            border-color: rgba(170, 220, 255, 0.7);
+            color: #fff;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 0 16px rgba(100, 180, 240, 0.25);
+        }
+        .music-panel {
+            position: fixed;
+            bottom: 22px;
+            right: 28px;
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 90px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #f0b940;
+            border: 1.5px solid #fff;
+            box-shadow: 0 0 10px rgba(240, 184, 64, 0.5);
+            cursor: pointer;
+        }
+        .volume-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #f0b940;
+            border: 1.5px solid #fff;
+            cursor: pointer;
+        }
+        .music-controller {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(16, 28, 50, 0.8);
+            backdrop-filter: blur(14px);
+            border: 1.5px solid rgba(120, 200, 255, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s ease;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            color: #c8e0ff;
+            font-size: 1.15rem;
+            position: relative;
+        }
+        .music-controller:hover {
+            transform: scale(1.1);
+            border-color: rgba(170, 220, 255, 0.7);
+            box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55), 0 0 24px rgba(100, 180, 255, 0.3);
+            color: #fff;
+        }
+        .music-controller--playing {
+            border-color: rgba(94, 240, 138, 0.6);
+            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5), 0 0 32px rgba(94, 240, 138, 0.35);
+            color: #5ef08a;
+            animation: musicGlow 2.5s infinite;
+        }
+        @keyframes musicGlow {
+            0%,
+            100% {
+                box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5), 0 0 22px rgba(94, 240, 138, 0.3);
+            }
+            50% {
+                box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5), 0 0 44px rgba(94, 240, 138, 0.6), 0 0 60px rgba(94, 240, 180, 0.2);
+            }
+        }
+        .music-controller .note-icon {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+        .music-controller--playing .note-icon {
+            animation: noteBounce 1.2s infinite;
+        }
+        @keyframes noteBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+            60% {
+                transform: translateY(2px);
+            }
+        }
+        .music-tooltip {
+            position: absolute;
+            right: 62px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: #ffe9b0;
+            border: 1px solid rgba(240, 180, 64, 0.3);
+        }
+        .music-controller:hover .music-tooltip {
+            opacity: 1;
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #1c2b3a;
+            backdrop-filter: blur(10px);
+            padding: 12px 26px;
+            border-radius: 60px;
+            color: #fff;
+            font-weight: 500;
+            z-index: 999;
+            transition: all 0.25s ease;
+            opacity: 0;
+            pointer-events: none;
+            border-left: 4px solid #5ef08a;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.25s ease;
+            backdrop-filter: blur(4px);
+        }
+        .lightbox.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 20px;
+            border: 2px solid #f0b940;
+            box-shadow: 0 0 50px rgba(240, 184, 64, 0.25);
+        }
+        .close-lightbox {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            font-size: 42px;
+            color: #fff;
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 1001;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .close-lightbox:hover {
+            transform: scale(1.15);
+            color: #f0b940;
+        }
+
+        /* ========== 全新布局 ========== */
+        .glass-card {
+            background: rgba(12, 22, 38, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(100, 180, 240, 0.2);
+            box-shadow: var(--shadow-glow), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(140, 200, 255, 0.45);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(140, 200, 255, 0.3) inset;
+        }
+
+        /* 页面主容器 */
+        .page-wrapper {
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem 4rem;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        /* 顶部通栏：英雄区 + 版本信息 */
+        .top-section {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .hero {
+            padding: 1.2rem 1rem 0.5rem;
+        }
+        .server-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(2rem, 5.5vw, 3rem);
+            background: linear-gradient(160deg, #ffd966 0%, #f0b940 35%, #e0d5ff 65%, #8cc8ff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(100, 180, 240, 0.45);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .server-sub {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            background: rgba(0, 0, 0, 0.45);
+            display: inline-block;
+            padding: 0.35rem 1.2rem;
+            border-radius: 50px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 0.3rem;
+        }
+        .owner-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            border: 1px solid rgba(240, 184, 64, 0.4);
+        }
+        .owner-badge i {
+            color: #f0b940;
+            font-size: 1.15rem;
+        }
+        .owner-badge strong {
+            color: #ffd26e;
+            font-size: 1.15rem;
+            margin-left: 4px;
+        }
+        .version-info {
+            margin-bottom: 0.4rem;
+        }
+        .version-badge {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
+            padding: 0.55rem 1.6rem;
+            border: 1px solid rgba(100, 190, 240, 0.4);
+            display: inline-block;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+        .version-badge i {
+            margin-right: 6px;
+            color: #6bc5ff;
+        }
+
+        /* 下方双栏区域 */
+        .content-columns {
+            display: flex;
+            gap: 1.4rem;
+            align-items: flex-start;
+        }
+        .sidebar {
+            width: 310px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            position: sticky;
+            top: 1rem;
+        }
+        .sidebar .glass-card {
+            padding: 1.3rem 1.2rem;
+        }
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        /* 侧边栏组件样式 */
+        .sidebar .panel h3 {
+            font-size: 1.05rem;
+            border-left: 3px solid #f0b940;
+            padding-left: 10px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .sidebar .stats-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.45rem 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            font-size: 0.85rem;
+            gap: 8px;
+        }
+        .sidebar .online-count {
+            font-weight: bold;
+            color: #5ef08a;
+            font-size: 1rem;
+        }
+        .sidebar .uptime-highlight {
+            font-weight: 700;
+            color: #ffd26e;
+        }
+        .sidebar .motd-preview {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            padding: 0.45rem 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            word-break: break-word;
+            color: #ffe9b0;
+        }
+        .sidebar .player-list {
+            margin-top: 0.7rem;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .sidebar .player-title {
+            font-size: 0.75rem;
+            margin-bottom: 0.45rem;
+            color: #b8d4f0;
+        }
+        .sidebar .player-names {
+            gap: 5px;
+        }
+        .sidebar .player-tag {
+            background: rgba(30, 144, 210, 0.5);
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            border: 1px solid rgba(90, 190, 255, 0.45);
+        }
+        .sidebar .server-status-badge {
+            background: #236345;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .sidebar .refresh-btn {
+            padding: 0.25rem 0.7rem;
+            font-size: 0.7rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            color: #c8ddf8;
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sidebar .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+        }
+        .sidebar .refresh-time {
+            font-size: 0.68rem;
+            opacity: 0.55;
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+        .sidebar .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            margin-top: 0.7rem;
+        }
+        .sidebar .action-btn {
+            background: rgba(25, 55, 85, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 0.55rem 0.9rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.3px;
+        }
+        .sidebar .action-btn:hover {
+            background: #1e6fba;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* 主内容区组件 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .feature-item {
+            padding: 1.4rem 1.3rem;
+            text-align: center;
+            border-radius: 24px;
+        }
+        .feature-icon {
+            font-size: 2.3rem;
+            background: rgba(240, 184, 64, 0.12);
+            width: 62px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.9rem;
+            border-radius: 50%;
+            border: 1.5px solid rgba(240, 184, 64, 0.35);
+            color: #f0b940;
+            transition: all 0.3s ease;
+        }
+        .feature-item:hover .feature-icon {
+            border-color: rgba(240, 184, 64, 0.65);
+            box-shadow: 0 0 18px rgba(240, 160, 40, 0.25);
+        }
+        .feature-item h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.45rem;
+            font-weight: 700;
+        }
+        .feature-item p {
+            opacity: 0.78;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .mods-panel {
+            padding: 1.3rem 1.4rem;
+        }
+        .mods-panel h3 {
+            font-size: 1.25rem;
+            border-left: 4px solid #f0b940;
+            padding-left: 12px;
+            margin-bottom: 0.9rem;
+        }
+        .main-content .stats-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.45rem 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            font-size: 0.87rem;
+            gap: 10px;
+        }
+        .badge {
+            background: #1a3a54;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .gallery-section {
+            padding: 1.3rem 1.4rem;
+        }
+        .gallery-title,
+        .honor-title,
+        .faq-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #f0b940;
+            padding-left: 12px;
+        }
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .carousel-viewport {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.35);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+        .carousel-slide {
+            flex: 0 0 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .carousel-viewport:hover .carousel-slide img {
+            transform: scale(1.03);
+        }
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(10, 22, 38, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(240, 184, 64, 0.4);
+            color: #ffdda0;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+        }
+        .carousel-arrow:hover {
+            background: rgba(25, 55, 90, 0.85);
+            border-color: rgba(240, 170, 50, 0.7);
+            color: #fff;
+        }
+        .carousel-arrow-left {
+            left: 10px;
+        }
+        .carousel-arrow-right {
+            right: 10px;
+        }
+        .carousel-arrow--disabled {
+            opacity: 0.25;
+            pointer-events: none;
+            cursor: default;
+            border-color: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.35);
+            box-shadow: none;
+        }
+        .carousel-dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .carousel-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(255, 210, 140, 0.3);
+            border: 1px solid rgba(240, 180, 64, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            flex-shrink: 0;
+        }
+        .carousel-dot:hover {
+            background: rgba(240, 180, 64, 0.6);
+            border-color: rgba(240, 170, 50, 0.65);
+            transform: scale(1.3);
+        }
+        .carousel-dot--active {
+            background: #f0b940;
+            border-color: #ffd26e;
+            box-shadow: 0 0 14px rgba(240, 160, 40, 0.55);
+            width: 11px;
+            height: 11px;
+            cursor: default;
+            pointer-events: none;
+        }
+        .image-note {
+            margin-top: 0.7rem;
+            text-align: center;
+            font-size: 0.7rem;
+            opacity: 0.55;
+        }
+        .honor-section {
+            padding: 1.3rem 1.4rem;
+        }
+        .honor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            list-style: none;
+        }
+        .honor-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.65rem 0.95rem;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+            font-size: 0.87rem;
+        }
+        .honor-item:hover {
+            background: rgba(20, 40, 60, 0.4);
+            border-color: rgba(100, 200, 255, 0.35);
+        }
+        .honor-item--gold {
+            border-color: rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(0, 0, 0, 0.25) 70%);
+        }
+        .honor-item--silver {
+            border-color: rgba(192, 192, 192, 0.4);
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.06) 0%, rgba(0, 0, 0, 0.25) 70%);
+        }
+        .honor-item--bronze {
+            border-color: rgba(205, 127, 50, 0.4);
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.06) 0%, rgba(0, 0, 0, 0.25) 70%);
+        }
+        .honor-rank {
+            font-size: 1.15rem;
+            font-weight: 700;
+            min-width: 32px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .rank-gold i {
+            color: #ffd700;
+            text-shadow: 0 0 6px #f0a000;
+        }
+        .rank-silver i {
+            color: #c0c0c0;
+        }
+        .rank-bronze i {
+            color: #cd7f32;
+        }
+        .honor-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .honor-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .honor-title-badge {
+            display: inline-block;
+            background: rgba(30, 144, 210, 0.2);
+            padding: 1px 8px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            border: 1px solid rgba(90, 180, 255, 0.2);
+            color: #b8d4f0;
+            align-self: flex-start;
+        }
+        .honor-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            opacity: 0.72;
+        }
+        .honor-amount {
+            color: #ffdda0;
+            font-weight: 600;
+        }
+        .honor-ship {
+            margin-left: auto;
+            font-size: 1.35rem;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+            flex-shrink: 0;
+        }
+        .honor-item:hover .honor-ship {
+            opacity: 0.8;
+        }
+        .honor-footer {
+            margin-top: 1.1rem;
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.55;
+            color: #a8b8d0;
+        }
+        .owner-message {
+            padding: 1.5rem 1.6rem;
+            text-align: center;
+            border: 1px solid rgba(240, 184, 64, 0.2);
+        }
+        .owner-message h3 {
+            margin: 10px 0 6px;
+            font-size: 1.15rem;
+        }
+        .owner-message p {
+            max-width: 620px;
+            margin: 0 auto;
+            opacity: 0.82;
+            font-size: 0.9rem;
+        }
+        .faq-section {
+            padding: 1.3rem 1.4rem;
+        }
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .faq-item {
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .faq-item summary {
+            padding: 0.75rem 1.1rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.87rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            color: #dce8f8;
+        }
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+        .faq-arrow {
+            flex-shrink: 0;
+            transition: transform 0.35s ease;
+            color: #f0b940;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(240, 184, 64, 0.1);
+        }
+        .faq-item[open] .faq-arrow {
+            transform: rotate(180deg);
+            background: rgba(240, 184, 64, 0.2);
+        }
+        .faq-answer {
+            padding: 0 1.1rem 0.9rem;
+            font-size: 0.83rem;
+            opacity: 0.8;
+            line-height: 1.65;
+            color: #c4d2e8;
+            border-top: 1px dashed rgba(255, 255, 255, 0.06);
+            padding-top: 0.7rem;
+        }
+        footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.62;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 1.8rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .content-columns {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.9rem;
+            }
+            .sidebar .glass-card {
+                padding: 1.1rem;
+            }
+            .features-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 550px) {
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .server-title {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="mc-bg" id="dynamicBg"></div>
-<div class="star-overlay"></div>
-<div class="twinkling" id="starsContainer"></div>
+    <div class="mc-bg" id="dynamicBg"></div>
+    <div class="star-overlay"></div>
+    <div class="twinkling" id="starsContainer"></div>
+    <div class="progress-bar" id="progressBar"></div>
+    <button class="scroll-to-top" id="scrollToTopBtn" aria-label="返回顶部"><i class="fas fa-arrow-up"></i></button>
 
-<div class="container">
-    <div class="hero">
-        <h1 class="server-title">✨ 星际远航 ✨</h1>
-        <div class="server-sub">
-            <i class="fas fa-rocket"></i> 机械动力 | 航空学 | 太空 | 枪械 | 应用能源2
-        </div>
-        <div class="owner-badge">
-            <i class="fas fa-crown"></i>
-            <span>✦ 服主 ✦</span>
-            <strong>113639</strong>
-            <i class="fas fa-star-of-life"></i>
-        </div>
+    <div class="music-panel" id="musicPanel">
+        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.35" aria-label="音量控制" title="音量">
+        <button class="music-controller" id="musicControllerBtn" aria-label="背景音乐控制" title="播放我的世界背景音乐">
+            <span class="note-icon">🎵</span>
+            <span class="music-tooltip" id="musicTooltip">播放Minecraft音乐</span>
+        </button>
     </div>
 
-    <div class="version-info">
-        <div class="version-badge">
-            <i class="fab fa-java"></i> Java版 1.21.1 | 机械动力全家桶 | 开放世界 | 枪械与太空探索
-        </div>
+    <div id="toastMessage" class="toast-msg">提示信息</div>
+    <div id="lightbox" class="lightbox">
+        <button class="close-lightbox">&times;</button>
+        <img id="lightboxImg" src="" alt="放大预览">
     </div>
 
-    <div class="features-grid">
-        <div class="glass-card feature-item">
-            <div class="feature-icon"><i class="fas fa-cogs"></i></div>
-            <h3>机械动力</h3>
-            <p>全自动流水线，旋转动力学，建造属于你的工业化星港。</p>
-        </div>
-        <div class="glass-card feature-item">
-            <div class="feature-icon"><i class="fas fa-plane"></i></div>
-            <h3>机械动力：航空学</h3>
-            <p>飞艇、直升机，制霸天际！打造空中舰队与星际运输线。</p>
-        </div>
-        <div class="glass-card feature-item">
-            <div class="feature-icon"><i class="fas fa-meteor"></i></div>
-            <h3>太空 · 星辰彼端</h3>
-            <p>火箭探索多星球，建立空间站，采集异星资源。</p>
-        </div>
-        <div class="glass-card feature-item">
-            <div class="feature-icon"><i class="fas fa-utensils"></i></div>
-            <h3>农夫乐事 & 烹饪</h3>
-            <p>沉浸式田园烹饪，在旅途中享受温暖美食。</p>
-        </div>
-    </div>
-
-    <div class="info-panels">
-        <div class="glass-card panel" id="realtimePanel">
-            <h3>
-                <span><i class="fas fa-chart-line"></i> 实时星港数据</span>
-                <button class="refresh-btn" id="manualRefreshBtn" style="padding: 0.3rem 1rem; font-size: 0.75rem;"><i class="fas fa-sync-alt"></i> 刷新</button>
-            </h3>
-            <div id="serverStatusContent">
-                <div style="text-align: center;"><i class="fas fa-spinner fa-pulse"></i> 正在加载数据...</div>
+    <div class="page-wrapper">
+        <!-- ========== 顶部：英雄区 + 版本信息 ========== -->
+        <div class="top-section">
+            <div class="hero">
+                <h1 class="server-title">✨ 星际远航 ✨</h1>
+                <div class="server-sub"><i class="fas fa-rocket"></i> 机械动力 | 航空学 | 太空 | 枪械 | 应用能源2</div>
+                <div class="owner-badge"><i class="fas fa-crown"></i><span>✦ 服主 ✦</span><strong>113639</strong><i class="fas fa-star-of-life"></i></div>
             </div>
-            <div class="refresh-time" id="lastUpdateTime">--:--:-- 最后更新</div>
+            <div class="version-info">
+                <div class="version-badge"><i class="fab fa-java"></i> Java版 1.21.1 | 机械动力全家桶 | 开放世界 | 枪械与太空探索</div>
+            </div>
         </div>
 
-        <div class="glass-card panel panel-right">
-            <h3><i class="fas fa-microchip"></i> 核心模组 & 特色玩法</h3>
-            <div class="panel-content-grow">
-                <ul class="stats-list">
-                    <li><span>⚙️ 机械动力 (Create)</span><span class="badge">完整版 + 扩展</span></li>
-                    <li><span>✈️ 机械动力：航空学</span><span class="badge">飞艇/飞机/物理</span></li>
-                    <li><span>🚀 太空探索 (暂未上线)</span><span class="badge">多星球/火箭/宇航服</span></li>
-                    <li><span>🍲 农夫乐事 & 扩展</span><span class="badge">烹饪/农耕/沉浸</span></li>
-                    <li><span>🔌 应用能源2 (AE2)</span><span class="badge">量子存储/自动化</span></li>
-                    <li><span>🔫 枪械模组 (枪械工艺)</span><span class="badge">现代武器/射击特效</span></li>
-                    <li><span>🌌 星际远航专属</span><span class="badge">星系任务/独特成就</span></li>
-                </ul>
-                <div class="quote" style="margin-top: 16px;">
-                    <i class="fas fa-quote-left"></i> 科技与魔法的交织，从齿轮到星球，每一处都是你的创造舞台。
+        <!-- ========== 下方：左右双栏 ========== -->
+        <div class="content-columns">
+            <!-- 左侧边栏 -->
+            <aside class="sidebar">
+                <div class="glass-card panel" id="realtimePanel">
+                    <h3><span><i class="fas fa-chart-line"></i> 星港数据</span><button class="refresh-btn" id="manualRefreshBtn"><i class="fas fa-sync-alt"></i> 刷新</button></h3>
+                    <div id="serverStatusContent"><div style="text-align:center;padding:0.9rem 0;"><i class="fas fa-spinner fa-pulse"></i> 加载中...</div></div>
+                    <div class="refresh-time" id="lastUpdateTime">--:--:-- 最后更新</div>
+                </div>
+                <div class="glass-card">
+                    <h3 style="font-size:1.05rem;border-left:3px solid #f0b940;padding-left:10px;margin-bottom:0.7rem;"><i class="fas fa-link"></i> 快捷入口</h3>
+                    <div class="action-buttons">
+                        <button id="clientDownloadBtn" class="action-btn"><i class="fas fa-download"></i> 客户端下载</button>
+                        <button id="qqGroupBtn" class="action-btn"><i class="fab fa-qq"></i> QQ交流群</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 右侧主内容 -->
+            <main class="main-content">
+                <div class="features-grid">
+                    <div class="glass-card feature-item"><div class="feature-icon"><i class="fas fa-cogs"></i></div><h3>机械动力</h3><p>全自动流水线，建造工业化星港。</p></div>
+                    <div class="glass-card feature-item"><div class="feature-icon"><i class="fas fa-plane"></i></div><h3>航空学</h3><p>飞艇、直升机，制霸天际！</p></div>
+                    <div class="glass-card feature-item"><div class="feature-icon"><i class="fas fa-meteor"></i></div><h3>太空探索</h3><p>火箭探索多星球，建立空间站。</p></div>
+                    <div class="glass-card feature-item"><div class="feature-icon"><i class="fas fa-utensils"></i></div><h3>农夫乐事</h3><p>沉浸式田园烹饪，温暖美食。</p></div>
+                </div>
+
+                <div class="glass-card mods-panel">
+                    <h3><i class="fas fa-microchip"></i> 核心模组 & 特色玩法</h3>
+                    <ul class="stats-list">
+                        <li><span>⚙️ 机械动力 (Create)</span><span class="badge">完整版 + 扩展</span></li>
+                        <li><span>✈️ 机械动力：航空学</span><span class="badge">飞艇/飞机/物理</span></li>
+                        <li><span>🚀 太空探索 (暂未上线)</span><span class="badge">多星球/火箭/宇航服</span></li>
+                        <li><span>🍲 农夫乐事 & 扩展</span><span class="badge">烹饪/农耕/沉浸</span></li>
+                        <li><span>🔌 应用能源2 (AE2)</span><span class="badge">量子存储/自动化</span></li>
+                        <li><span>🔫 枪械模组 (枪械工艺)</span><span class="badge">现代武器/射击特效</span></li>
+                        <li><span>🌌 星际远航专属</span><span class="badge">星系任务/独特成就</span></li>
+                    </ul>
+                    <div style="margin-top:14px;font-style:italic;opacity:0.68;font-size:0.85rem;"><i class="fas fa-quote-left"></i> 科技与魔法的交织，从齿轮到星球，每一处都是你的创造舞台。</div>
+                </div>
+
+                <div class="glass-card gallery-section">
+                    <div class="gallery-title"><i class="fas fa-images"></i> 服务器风采</div>
+                    <div id="galleryContainer" class="carousel-wrapper"></div>
+                    <div class="image-note">💡 点击图片可放大预览 | 使用左右箭头翻页浏览</div>
+                </div>
+
+                <div class="glass-card honor-section" id="honorWall">
+                    <div class="honor-title"><i class="fas fa-trophy"></i> 星港荣誉墙 · 赞助排行榜</div>
+                    <ul class="honor-list" id="honorList"></ul>
+                    <div class="honor-footer"><i class="fas fa-star"></i> 感谢每一位舰长的支持，你们的星辉照亮了整片星海 <i class="fas fa-star"></i></div>
+                </div>
+
+                <div class="glass-card owner-message">
+                    <i class="fas fa-microphone-alt" style="font-size:1.5rem;color:#f0b940;"></i>
+                    <h3>✦ 舰长寄语 ✦</h3>
+                    <p>"我是服主 113639，从一颗小小的星球开始，我们一起搭建了这片星海。机械动力带动工业革命，航空学让我们翱翔天际，现在，太空早已不是极限。欢迎加入星际远航，谱写你的史诗！"</p>
+                    <div style="margin-top:16px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;opacity:0.72;font-size:0.83rem;"><span><i class="fas fa-trophy"></i> 2026 热门服务器</span><span><i class="fas fa-shield-alt"></i> 反作弊 & 稳定运营</span></div>
+                </div>
+
+                <div class="glass-card faq-section" id="faqSection">
+                    <div class="faq-title"><i class="fas fa-question-circle"></i> 常见问题 · FAQ</div>
+                    <div class="faq-list">
+                        <details class="faq-item"><summary><span><i class="fas fa-rocket"></i> 如何加入服务器？</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></summary><div class="faq-answer">群文件下载整合包客户端，内含服务器IP。支持 Java 1.21.1。</div></details>
+                        <details class="faq-item"><summary><span><i class="fas fa-user-check"></i> 需要正版吗？</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></summary><div class="faq-answer"><strong style="color:#5ef08a;">支持正版/离线</strong>登录。</div></details>
+                        <details class="faq-item"><summary><span><i class="fas fa-cogs"></i> 服务器主要模组？</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></summary><div class="faq-answer">机械动力完整版、航空学、AE2、枪械工艺、农夫乐事及附属，太空探索即将上线。</div></details>
+                        <details class="faq-item"><summary><span><i class="fas fa-gavel"></i> 服务器规则？</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></summary><div class="faq-answer">禁止作弊、恶意破坏、刷屏、人身攻击。详细规则见群公告。</div></details>
+                        <details class="faq-item"><summary><span><i class="fas fa-comment-dots"></i> 如何反馈？</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></summary><div class="faq-answer">加入 <strong style="color:#ffd26e;">QQ群 1094559648</strong> 或联系服主 113639。</div></details>
+                        <details class="faq-item"><summary><span><i class="fas fa-coins"></i> 是否收费？</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></summary><div class="faq-answer"><strong style="color:#5ef08a;">完全免费</strong>，自愿赞助可在网站荣誉墙展示。</div></details>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <footer>
+            <p>© 2026 星际远航 Minecraft 服务器 | 核心玩法: 机械动力 · 航空学 · 太空 · 应用能源2 · 枪械 · 农夫乐事</p>
+            <p><i class="fab fa-minecraft"></i> 服务器实时状态显示 | 星辰大海等你启航</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            const BACKGROUND_IMAGE_URL = "https://s41.ax1x.com/2026/05/05/peHdqXV.png";
+            const SIMULATE_MANY_PLAYERS = false;
+            const CLIENT_DOWNLOAD_URL = "https://share.feijipan.com/s/JV4nCznq";
+            const QQ_GROUP_URL = "https://qm.qq.com/q/Uguko66sg4";
+            const QQ_NUMBER = "1094559648";
+            const imagesData = [
+                { url: "https://s41.ax1x.com/2026/05/05/peHwdcq.jpg", alt: "星际工坊" },
+                { url: "https://s41.ax1x.com/2026/05/05/peHwTED.jpg", alt: "风景图" },
+                { url: "https://s41.ax1x.com/2026/05/05/peH0NVO.jpg", alt: "风景图" },
+                { url: "https://s41.ax1x.com/2026/05/05/peHBb6I.jpg", alt: "风景图" },
+                { url: "https://s41.ax1x.com/2026/05/05/peHBH1A.jpg", alt: "风景图" },
+                { url: "https://s41.ax1x.com/2026/05/05/peH7XDK.jpg", alt: "风景图" },
+                { url: "https://s41.ax1x.com/2026/05/05/peHBqXt.jpg", alt: "风景图" }
+            ];
+            const SERVER_START_DATE = "2026-04-28";
+            const BACKGROUND_MUSIC_URL = "https://music.163.com/song/media/outer/url?id=32785653.mp3";
+
+            const sponsorData = [
+                { name: "星际旅者_X", amount: 0, title: "星舰舰长", shipIcon: "fa-rocket" }
+            ];
+
+            let globalOnlineCount = 150;
+            let globalPlayerNames = [];
+            let lastApiLatency = null;
+
+            function preloadBackgroundImage(url) {
+                const img = new Image();
+                img.onload = () => { const bgDiv = document.getElementById('dynamicBg'); if (bgDiv) bgDiv.style.backgroundImage = `url('${url}')`; };
+                img.onerror = () => console.warn("背景图片加载失败");
+                img.src = url;
+            }
+            preloadBackgroundImage(BACKGROUND_IMAGE_URL);
+            const serverUptimeDays = Math.max(0, Math.floor((new Date() - new Date(SERVER_START_DATE)) / (1000 * 60 * 60 * 24)));
+
+            function generateMockPlayerList(count) {
+                const prefixes = ["星际", "深空", "星尘", "引力", "跃迁", "脉冲", "星云", "轨道", "彗星", "星环", "光年", "黑洞", "重力", "亚光速", "曲速"];
+                const suffixes = ["旅者", "工程师", "舰长", "探险家", "机械师", "飞行员", "矿工", "建筑师", "战士", "商人", "农夫", "枪手", "博士", "拾荒者"];
+                const names = [];
+                for (let i = 1; i <= count; i++) {
+                    let prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+                    let suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+                    names.push(`${prefix}${suffix}_${Math.floor(Math.random() * 900) + 100}`);
+                }
+                const unique = [], map = new Map();
+                for (let n of names) {
+                    if (!map.has(n)) { map.set(n, true); unique.push(n); } else unique.push(`${n}_${unique.length}`);
+                }
+                return unique.slice(0, count);
+            }
+
+            function renderPlayerList(arr) {
+                if (!arr || arr.length === 0) return `<div class="player-list"><div class="player-title"><i class="fas fa-user-astronaut"></i> 在线船员 <span style="font-size:0.65rem;">(暂无)</span></div><div style="opacity:0.5;font-size:0.72rem;">🌠 星港寂静</div></div>`;
+                const display = arr.slice(0, 20);
+                const remaining = arr.length - 20;
+                let tags = display.map(n => `<span class="player-tag"><i class="fas fa-user"></i> ${escapeHtml(n)}</span>`).join('');
+                if (remaining > 0) tags += `<span class="player-tag" style="background:#3a2a4e;">+${remaining}</span>`;
+                return `<div class="player-list"><div class="player-title"><i class="fas fa-users"></i> 在线船员 (${arr.length})</div><div class="player-names">${tags}</div></div>`;
+            }
+
+            function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] || m)) : ''; }
+
+function renderHonorWall() {
+    // 只保留 amount > 0 的赞助记录，并按金额降序排列
+    const filtered = sponsorData.filter(sponsor => sponsor.amount > 0);
+    const sorted = [...filtered].sort((a, b) => b.amount - a.amount);
+    const listEl = document.getElementById('honorList');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    sorted.forEach((sponsor, index) => {
+        const rank = index + 1;
+        let rankClass = '', rankIconHtml = '';
+        if (rank === 1) {
+            rankClass = 'honor-item--gold rank-gold';
+            rankIconHtml = '<i class="fas fa-crown"></i>';
+        } else if (rank === 2) {
+            rankClass = 'honor-item--silver rank-silver';
+            rankIconHtml = '<i class="fas fa-medal"></i>';
+        } else if (rank === 3) {
+            rankClass = 'honor-item--bronze rank-bronze';
+            rankIconHtml = '<i class="fas fa-award"></i>';
+        } else {
+            rankIconHtml = `<span style="font-weight:600;font-size:0.95rem;color:#aab;">${rank}</span>`;
+        }
+        const li = document.createElement('li');
+        li.className = `honor-item ${rankClass}`;
+        li.innerHTML = `
+            <div class="honor-rank">${rankIconHtml}</div>
+            <div class="honor-info">
+                <div class="honor-name"><i class="fas fa-user-astronaut"></i><span>${escapeHtml(sponsor.name)}</span></div>
+                <div class="honor-details">
+                    <span class="honor-title-badge"><i class="fas fa-tag"></i> ${escapeHtml(sponsor.title)}</span>
+                    <span class="honor-amount"><i class="fas fa-coins"></i> ${sponsor.amount} 元</span>
                 </div>
             </div>
-            <div class="action-buttons">
-                <button id="clientDownloadBtn" class="action-btn"><i class="fas fa-download"></i> 客户端下载</button>
-                <button id="qqGroupBtn" class="action-btn"><i class="fab fa-qq"></i> QQ交流群</button>
-            </div>
-        </div>
-    </div>
+            <div class="honor-ship"><i class="fas ${escapeHtml(sponsor.shipIcon || 'fa-rocket')}"></i></div>
+        `;
+        listEl.appendChild(li);
+    });
+}
 
-    <div class="gallery-section glass-card" style="padding: 1.8rem;">
-        <div class="gallery-title">
-            <i class="fas fa-images"></i> 服务器风采
-        </div>
-        <div id="galleryContainer" class="gallery-single-col"></div>
-        <div class="show-more-btn" id="showMoreBtnWrap">
-            <button class="btn-primary" id="showMoreGalleryBtn"><i class="fas fa-arrow-down"></i> 展示更多</button>
-        </div>
-        <div class="image-note">
-            💡 点击图片可放大预览
-        </div>
-    </div>
+            // 音乐
+            const musicBtn = document.getElementById('musicControllerBtn');
+            const musicTooltipEl = document.getElementById('musicTooltip');
+            const volumeSlider = document.getElementById('volumeSlider');
+            let audioContext = null, isMusicPlaying = false, masterGainNode = null, oscNodes = [], lfoNodes = [];
+            let audioElement = null;
 
-    <div class="owner-message glass-card">
-        <i class="fas fa-microphone-alt"></i>
-        <h3 style="margin: 10px 0 5px;">✦ 舰长寄语 ✦</h3>
-        <p style="max-width: 700px; margin: 0 auto;">“我是服主 113639，从一颗小小的星球开始，我们一起搭建了这片星海。机械动力带动工业革命，航空学让我们翱翔天际，现在，太空早已不是极限。欢迎加入星际远航，谱写你的史诗！”</p>
-        <div style="margin-top: 20px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-            <span><i class="fas fa-trophy"></i> 2026 热门机械动力/航空学服务器</span>
-            <span><i class="fas fa-shield-alt"></i> 反作弊 & 稳定运营</span>
-        </div>
-    </div>
-
-    <footer>
-        <p>© 2026 星际远航 Minecraft 服务器 | 核心玩法: 机械动力 · 航空学 · 太空 · 应用能源2 · 枪械 · 农夫乐事</p>
-        <p style="margin-top: 8px;"><i class="fab fa-minecraft"></i> 服务器实时状态显示 | 星辰大海等你启航</p>
-    </footer>
-</div>
-
-<div id="toastMessage" class="toast-msg">提示信息</div>
-<div id="lightbox" class="lightbox">
-    <button class="close-lightbox">&times;</button>
-    <img id="lightboxImg" src="" alt="放大预览">
-</div>
-
-<script>
-    (function() {
-        // ================= 可修改的配置项 =================
-        // 1. 背景图片链接
-        const BACKGROUND_IMAGE_URL = "https://s41.ax1x.com/2026/05/05/peHdqXV.png";
-        
-        // 2. 是否模拟大量在线玩家 (true = 永远显示150人在线 / false = 尝试真实服务器API)
-        // 注意: 真实服务器API可能因网络或服务器离线而显示"离线/未响应"，建议保持 true 以获得最佳展示效果
-        const SIMULATE_MANY_PLAYERS = false;
-        
-        // 3. 客户端下载链接 (修改为真实地址)
-        const CLIENT_DOWNLOAD_URL = "https://share.feijipan.com/s/JV4nCznq";
-        
-        // 4. QQ加群链接 (可直接设置为群链接，留空则复制群号)
-        const QQ_GROUP_URL = "https://qm.qq.com/q/Uguko66sg4";
-        const QQ_NUMBER = "1094559648";
-        
-        // 5. 图片画廊数据 (可修改图片链接和描述)
-        const imagesData = [
-            { url: "https://s41.ax1x.com/2026/05/05/peHwdcq.jpg", alt: "星际工坊" },
-            { url: "https://s41.ax1x.com/2026/05/05/peHwTED.jpg", alt: "风景图" },
-            { url: "https://s41.ax1x.com/2026/05/05/peH0NVO.jpg", alt: "风景图" },
-            { url: "https://s41.ax1x.com/2026/05/05/peHBb6I.jpg", alt: "风景图" },
-            { url: "https://s41.ax1x.com/2026/05/05/peHBH1A.jpg", alt: "风景图" },
-            { url: "https://s41.ax1x.com/2026/05/05/peH7XDK.jpg", alt: "风景图" },
-            { url: "https://s41.ax1x.com/2026/05/05/peHBqXt.jpg", alt: "风景图" }
-        ];
-        // ================================================
-        
-        // 预加载背景图片
-        function preloadBackgroundImage(url) {
-            const img = new Image();
-            img.onload = () => {
-                const bgDiv = document.getElementById('dynamicBg');
-                if (bgDiv) bgDiv.style.backgroundImage = `url('${url}')`;
-            };
-            img.onerror = () => console.warn("背景图片加载失败");
-            img.src = url;
-        }
-        preloadBackgroundImage(BACKGROUND_IMAGE_URL);
-        
-        // 生成模拟玩家列表 (150个有趣名字)
-        function generateMockPlayerList(count) {
-            const prefixes = ["星际", "深空", "星尘", "引力", "跃迁", "脉冲", "星云", "轨道", "彗星", "星环", "光年", "黑洞", "重力", "亚光速", "曲速"];
-            const suffixes = ["旅者", "工程师", "舰长", "探险家", "机械师", "飞行员", "矿工", "建筑师", "战士", "商人", "农夫", "枪手", "博士", "拾荒者"];
-            const names = [];
-            for (let i = 1; i <= count; i++) {
-                let prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-                let suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-                let num = Math.floor(Math.random() * 900) + 100;
-                names.push(`${prefix}${suffix}_${num}`);
+            function setVolume(value) {
+                const vol = Math.min(1, Math.max(0, value));
+                if (audioElement) audioElement.volume = vol;
+                if (masterGainNode && audioContext) masterGainNode.gain.setTargetAtTime(vol, audioContext.currentTime, 0.1);
+                localStorage.setItem('starShipVolume', vol);
             }
-            // 去重
-            const unique = [];
-            const map = new Map();
-            for (let n of names) {
-                if (!map.has(n)) {
-                    map.set(n, true);
-                    unique.push(n);
+            function loadVolume() {
+                const saved = localStorage.getItem('starShipVolume');
+                if (saved !== null) { const v = parseFloat(saved); volumeSlider.value = v; return v; }
+                return 0.35;
+            }
+            function createSpaceAmbience() {
+                if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                masterGainNode = audioContext.createGain();
+                masterGainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                masterGainNode.connect(audioContext.destination);
+                const osc1 = audioContext.createOscillator(); osc1.type = 'sine'; osc1.frequency.setValueAtTime(58, audioContext.currentTime);
+                const gain1 = audioContext.createGain(); gain1.gain.setValueAtTime(0.12, audioContext.currentTime);
+                osc1.connect(gain1); gain1.connect(masterGainNode); osc1.start(); oscNodes.push({ osc: osc1, gain: gain1 });
+                const osc2 = audioContext.createOscillator(); osc2.type = 'triangle'; osc2.frequency.setValueAtTime(175, audioContext.currentTime);
+                const gain2 = audioContext.createGain(); gain2.gain.setValueAtTime(0.06, audioContext.currentTime);
+                osc2.connect(gain2); gain2.connect(masterGainNode); osc2.start(); oscNodes.push({ osc: osc2, gain: gain2 });
+                const osc3 = audioContext.createOscillator(); osc3.type = 'sine'; osc3.frequency.setValueAtTime(820, audioContext.currentTime);
+                const gain3 = audioContext.createGain(); gain3.gain.setValueAtTime(0.015, audioContext.currentTime);
+                osc3.connect(gain3); gain3.connect(masterGainNode); osc3.start(); oscNodes.push({ osc: osc3, gain: gain3 });
+                const lfo1 = audioContext.createOscillator(); lfo1.type = 'sine'; lfo1.frequency.setValueAtTime(0.15, audioContext.currentTime);
+                const lfoGain1 = audioContext.createGain(); lfoGain1.gain.setValueAtTime(8, audioContext.currentTime);
+                lfo1.connect(lfoGain1); lfoGain1.connect(osc1.frequency); lfo1.start(); lfoNodes.push(lfo1);
+                const lfo2 = audioContext.createOscillator(); lfo2.type = 'sine'; lfo2.frequency.setValueAtTime(0.22, audioContext.currentTime);
+                const lfoGain2 = audioContext.createGain(); lfoGain2.gain.setValueAtTime(20, audioContext.currentTime);
+                lfo2.connect(lfoGain2); lfoGain2.connect(osc2.frequency); lfo2.start(); lfoNodes.push(lfo2);
+            }
+            function startMusic() {
+                if (BACKGROUND_MUSIC_URL && BACKGROUND_MUSIC_URL.trim() !== '') {
+                    if (!audioElement) { audioElement = document.createElement('audio'); audioElement.src = BACKGROUND_MUSIC_URL; audioElement.loop = true; audioElement.volume = loadVolume(); audioElement.id = 'bgMusicAudio'; document.body.appendChild(audioElement); }
+                    audioElement.play().then(() => { isMusicPlaying = true; updateMusicUI(true); showToast('🎵 正在播放我的世界背景音乐', true); localStorage.setItem('starShipMusicPlaying', 'true'); })
+                    .catch(() => { showToast('音乐播放被浏览器阻止，点击页面任意位置以启动', false);
+                        const resume = () => { if (audioElement) { audioElement.play().then(() => { isMusicPlaying = true; updateMusicUI(true); localStorage.setItem('starShipMusicPlaying', 'true'); document.removeEventListener('click', resume); document.removeEventListener('touchstart', resume); }).catch(() => {}); } };
+                        document.addEventListener('click', resume, { once: true }); document.addEventListener('touchstart', resume, { once: true }); });
                 } else {
-                    unique.push(`${n}_${unique.length}`);
+                    try { createSpaceAmbience(); masterGainNode.gain.setTargetAtTime(loadVolume(), audioContext.currentTime, 0.8); isMusicPlaying = true; updateMusicUI(true); localStorage.setItem('starShipMusicPlaying', 'true'); showToast('🎵 Minecraft氛围音已激活', true); }
+                    catch (e) { showToast('音频系统暂不可用', false); }
                 }
             }
-            return unique.slice(0, count);
-        }
-        
-        // 渲染玩家列表 (最多30个，超出折叠)
-        function renderPlayerList(playersArray) {
-            if (!playersArray || playersArray.length === 0) {
-                return `<div class="player-list"><div class="player-title"><i class="fas fa-user-astronaut"></i> 在线船员 <span style="font-size:0.7rem;">(暂无玩家在线)</span></div><div style="opacity:0.6; font-size:0.8rem;">🌠 星港寂静，等待舰长登船</div></div>`;
+            function stopMusic() {
+                if (audioElement) { audioElement.pause(); }
+                if (masterGainNode && audioContext) masterGainNode.gain.setTargetAtTime(0, audioContext.currentTime, 0.5);
+                setTimeout(() => { oscNodes.forEach(({ osc }) => { try { osc.stop(); } catch (e) {} }); lfoNodes.forEach(lfo => { try { lfo.stop(); } catch (e) {} }); oscNodes = []; lfoNodes = []; if (masterGainNode) { try { masterGainNode.disconnect(); } catch (e) {}; masterGainNode = null; } }, 600);
+                isMusicPlaying = false; updateMusicUI(false); localStorage.setItem('starShipMusicPlaying', 'false');
             }
-            const maxDisplay = 30;
-            const displayPlayers = playersArray.slice(0, maxDisplay);
-            const remaining = playersArray.length - maxDisplay;
-            let tagsHtml = displayPlayers.map(name => `<span class="player-tag"><i class="fas fa-user"></i> ${escapeHtml(name)}</span>`).join('');
-            if (remaining > 0) {
-                tagsHtml += `<span class="player-tag" style="background:#3a2a4e;" title="还有 ${remaining} 位船员未列出">+${remaining} 位船员</span>`;
+            function updateMusicUI(playing) {
+                if (playing) { musicBtn.classList.add('music-controller--playing'); musicTooltipEl.textContent = '暂停Minecraft音乐'; }
+                else { musicBtn.classList.remove('music-controller--playing'); musicTooltipEl.textContent = '播放Minecraft音乐'; }
             }
-            return `<div class="player-list"><div class="player-title"><i class="fas fa-users"></i> 在线船员 (${playersArray.length})</div><div class="player-names">${tagsHtml}</div></div>`;
-        }
-        
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] || m));
-        }
-        
-        // 模拟在线数据（确保永远不显示离线）
-        function renderSimulatedData() {
-            const mockPlayerCount = 150;
-            const mockPlayers = generateMockPlayerList(mockPlayerCount);
-            const version = "1.21.1 (机械动力整合包)";
-            const software = "Create / 航空学整合包";
-            const motd = "✨ 星际远航 | 机械动力 · 航空学 · 太空探索 | 150+ 在线 ✨";
-            
-            const playersListHtml = renderPlayerList(mockPlayers);
-            const statusHtml = `
-                <ul class="stats-list">
-                    <li><span><i class="fas fa-user-astronaut"></i> 在线探索者</span><span class="online-count">${mockPlayerCount} / 200</span></li>
-                    <li><span><i class="fas fa-code-branch"></i> 游戏版本</span><span>${escapeHtml(version)}</span></li>
-                    <li><span><i class="fas fa-microchip"></i> 整合包核心</span><span>${escapeHtml(software)}</span></li>
-                    <li><span><i class="fas fa-globe"></i> 星港广播</span></li>
-                </ul>
-                <div class="motd-preview">✨ ${escapeHtml(motd)} ✨</div>
-                ${playersListHtml}
-                <div style="margin-top: 12px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 引擎运转中 · 服务器在线 (模拟数据)</span></div>
-            `;
-            document.getElementById('serverStatusContent').innerHTML = statusHtml;
-            const now = new Date();
-            document.getElementById('lastUpdateTime').innerText = `${now.toLocaleTimeString()} 模拟同步`;
-        }
-        
-        // 刷新按钮行为 (如果是模拟模式，重新生成数据)
-        const refreshBtn = document.getElementById('manualRefreshBtn');
-        const statusContainer = document.getElementById('serverStatusContent');
-        const lastUpdateSpan = document.getElementById('lastUpdateTime');
-        const toast = document.getElementById('toastMessage');
-        
-        function showToast(msg, isSuccess = true) {
-            toast.innerText = msg;
-            toast.style.opacity = '1';
-            toast.style.transform = 'translateX(-50%) scale(1)';
-            toast.style.borderLeftColor = isSuccess ? '#4caf50' : '#f44336';
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(-50%) scale(0.9)';
-            }, 2200);
-        }
-        
-        async function refreshData(manual = false) {
-            if (SIMULATE_MANY_PLAYERS) {
-                // 模拟模式：重新生成玩家列表（随机变化）
-                renderSimulatedData();
-                if (manual) showToast("已刷新模拟在线数据", true);
-            } else {
-                // 真实模式（可能离线，不建议使用）
-                statusContainer.innerHTML = `<div style="text-align: center;"><i class="fas fa-spinner fa-pulse"></i> 正在请求服务器状态...</div>`;
-                try {
-                    const SERVER_HOST = "n6-1.yxsjmc.cn";
-                    const SERVER_PORT = "20055";
-                    const apiUrl = `https://api.mcsrvstat.us/2/${SERVER_HOST}:${SERVER_PORT}`;
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 8000);
-                    const response = await fetch(apiUrl, { signal: controller.signal });
-                    clearTimeout(timeoutId);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const data = await response.json();
-                    if (data && data.online === true) {
-                        const onlinePlayers = data.players?.online ?? '?';
-                        const maxPlayers = data.players?.max ?? '?';
-                        const version = data.version || "未知版本";
-                        let motd = "";
-                        if (data.motd && data.motd.clean && data.motd.clean.length) motd = data.motd.clean.join(" ");
-                        else if (data.motd && data.motd.raw) motd = data.motd.raw;
-                        else motd = "星际远航 | 机械动力 | 航空学 | 太空";
-                        const software = data.software ? data.software : "Create / 航空学整合包";
-                        let playersListHtml = '';
-                        if (data.players && Array.isArray(data.players.list) && data.players.list.length > 0) {
-                            playersListHtml = renderPlayerList(data.players.list);
+            musicBtn.addEventListener('click', () => { if (isMusicPlaying) stopMusic(); else startMusic(); });
+            volumeSlider.addEventListener('input', (e) => setVolume(parseFloat(e.target.value)));
+            volumeSlider.value = loadVolume();
+            window.addEventListener('beforeunload', () => { if (audioElement) { audioElement.pause(); audioElement.remove(); } });
+
+            // Toast
+            const toast = document.getElementById('toastMessage');
+            function showToast(msg, isSuccess = true) {
+                toast.innerText = msg; toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) scale(1)'; toast.style.borderLeftColor = isSuccess ? '#4caf50' : '#f44336';
+                setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) scale(0.9)'; }, 2200);
+            }
+
+            // 服务器数据
+            function renderSimulatedData() {
+                globalOnlineCount = 150; const mockPlayers = generateMockPlayerList(globalOnlineCount); globalPlayerNames = mockPlayers;
+                document.getElementById('serverStatusContent').innerHTML = `
+                    <ul class="stats-list">
+                        <li><span><i class="fas fa-user-astronaut"></i> 在线</span><span class="online-count">${globalOnlineCount} / 200</span></li>
+                        <li><span><i class="fas fa-tachometer-alt"></i> TPS</span><span style="color:#5ef08a;">20.0</span></li>
+                        <li><span><i class="fas fa-clock"></i> 延迟</span><span>≈ -- ms</span></li>
+                        <li><span><i class="fas fa-code-branch"></i> 版本</span><span>1.21.1</span></li>
+                        <li><span><i class="fas fa-calendar-check"></i> 运行</span><span class="uptime-highlight">${serverUptimeDays} 天</span></li>
+                    </ul>
+                    <div class="motd-preview">✨ 星际远航 | 机械动力 · 航空学 · 太空 ✨</div>
+                    ${renderPlayerList(mockPlayers)}
+                    <div style="margin-top:8px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 在线 (模拟)</span></div>`;
+                document.getElementById('lastUpdateTime').innerText = `${new Date().toLocaleTimeString()} 模拟同步`;
+                updateDynamicTitle();
+            }
+
+            async function refreshData(manual = false) {
+                const statusContainer = document.getElementById('serverStatusContent');
+                const lastUpdateSpan = document.getElementById('lastUpdateTime');
+                if (SIMULATE_MANY_PLAYERS) { renderSimulatedData(); if (manual) showToast("已刷新模拟在线数据", true); }
+                else {
+                    statusContainer.innerHTML = `<div style="text-align:center;padding:0.9rem 0;"><i class="fas fa-spinner fa-pulse"></i> 请求中...</div>`;
+                    const startTime = performance.now();
+                    try {
+                        const apiUrl = `https://api.mcsrvstat.us/2/n6-1.yxsjmc.cn:20055`;
+                        const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 8000);
+                        const response = await fetch(apiUrl, { signal: controller.signal }); clearTimeout(timeoutId);
+                        const latency = Math.round(performance.now() - startTime); lastApiLatency = latency;
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        const data = await response.json();
+                        if (data && data.online === true) {
+                            globalOnlineCount = data.players?.online ?? 0; const maxPlayers = data.players?.max ?? '?';
+                            const version = data.version || "未知版本"; let motd = data.motd?.clean?.join(" ") || data.motd?.raw || "星际远航";
+                            let playersListHtml = '';
+                            if (data.players?.list?.length) { globalPlayerNames = data.players.list; playersListHtml = renderPlayerList(data.players.list); }
+                            else { globalPlayerNames = []; playersListHtml = globalOnlineCount === 0 ? renderPlayerList([]) : `<div class="player-list"><div class="player-title">🔮 当前 ${globalOnlineCount} 位探险家在线</div></div>`; }
+                            statusContainer.innerHTML = `
+                                <ul class="stats-list">
+                                    <li><span><i class="fas fa-user-astronaut"></i> 在线</span><span class="online-count">${globalOnlineCount} / ${maxPlayers}</span></li>
+                                    <li><span><i class="fas fa-tachometer-alt"></i> TPS</span><span style="color:#5ef08a;">20.0</span></li>
+                                    <li><span><i class="fas fa-clock"></i> 延迟</span><span>≈ ${latency} ms</span></li>
+                                    <li><span><i class="fas fa-code-branch"></i> 版本</span><span>${escapeHtml(version)}</span></li>
+                                    <li><span><i class="fas fa-calendar-check"></i> 运行</span><span class="uptime-highlight">${serverUptimeDays} 天</span></li>
+                                </ul>
+                                <div class="motd-preview">✨ ${escapeHtml(motd)} ✨</div>
+                                ${playersListHtml}
+                                <div style="margin-top:8px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 在线</span></div>`;
                         } else {
-                            playersListHtml = (onlinePlayers === 0) ? renderPlayerList([]) : `<div class="player-list"><div class="player-title"><i class="fas fa-user-secret"></i> 星际隐私协议</div><div>🔮 当前 ${onlinePlayers} 位探险家正在遨游，名单暂未公开</div></div>`;
+                            globalOnlineCount = 0; globalPlayerNames = [];
+                            statusContainer.innerHTML = `<ul class="stats-list"><li>星门离线</li><li><span>延迟</span><span>${latency} ms</span></li></ul><div class="motd-preview">🛸 服务器离线或网络波动</div>`;
                         }
-                        const statusHtml = `
-                            <ul class="stats-list">
-                                <li><span><i class="fas fa-user-astronaut"></i> 在线探索者</span><span class="online-count">${onlinePlayers} / ${maxPlayers}</span></li>
-                                <li><span><i class="fas fa-code-branch"></i> 游戏版本</span><span>${escapeHtml(version)}</span></li>
-                                <li><span><i class="fas fa-microchip"></i> 整合包核心</span><span>${escapeHtml(software)}</span></li>
-                                <li><span><i class="fas fa-globe"></i> 星港广播</span></li>
-                            </ul>
-                            <div class="motd-preview">✨ ${escapeHtml(motd)} ✨</div>
-                            ${playersListHtml}
-                            <div style="margin-top: 12px;"><span class="server-status-badge status-online"><i class="fas fa-check-circle"></i> 引擎运转中 · 服务器在线</span></div>
-                        `;
-                        statusContainer.innerHTML = statusHtml;
-                    } else {
-                        statusContainer.innerHTML = `<ul class="stats-list"><li><span><i class="fas fa-satellite-dish"></i> 星门状态</span><span class="status-offline" style="color:#ffab91;"><i class="fas fa-exclamation-triangle"></i> 离线/未响应</span></li></ul><div class="motd-preview">🛸 服务器可能未开启或网络波动，请稍后再试。</div>`;
+                        lastUpdateSpan.innerText = `${new Date().toLocaleTimeString()} 真实同步`;
+                    } catch (error) {
+                        const latency = Math.round(performance.now() - startTime); lastApiLatency = latency;
+                        statusContainer.innerHTML = `<ul class="stats-list"><li>信号丢失</li><li><span>延迟</span><span>${latency} ms</span></li></ul><div class="motd-preview">☄️ 请检查网络</div>`;
+                        lastUpdateSpan.innerText = `${new Date().toLocaleTimeString()} 同步失败`;
                     }
-                    lastUpdateSpan.innerText = `${new Date().toLocaleTimeString()} 真实同步`;
-                } catch (error) {
-                    statusContainer.innerHTML = `<ul><li>信号丢失，无法联系星港</li></ul><div class="motd-preview">☄️ 请检查网络或开启模拟模式 (SIMULATE_MANY_PLAYERS = true)。</div>`;
-                    lastUpdateSpan.innerText = `${new Date().toLocaleTimeString()} 同步失败`;
+                }
+                updateDynamicTitle();
+            }
+
+            document.getElementById('manualRefreshBtn').addEventListener('click', () => refreshData(true));
+            if (SIMULATE_MANY_PLAYERS) { renderSimulatedData(); setInterval(() => refreshData(false), 35000); }
+            else { refreshData(false); setInterval(() => refreshData(false), 35000); }
+
+            document.getElementById('clientDownloadBtn').addEventListener('click', () => { if (CLIENT_DOWNLOAD_URL != "#") window.open(CLIENT_DOWNLOAD_URL, '_blank'); else showToast("客户端下载链接失效", false); });
+            document.getElementById('qqGroupBtn').addEventListener('click', () => { if (QQ_GROUP_URL != "#") window.open(QQ_GROUP_URL, '_blank'); else navigator.clipboard.writeText(QQ_NUMBER).then(() => showToast(`QQ群号 ${QQ_NUMBER} 已复制`, true)).catch(() => showToast("复制失败", false)); });
+
+            function updateDynamicTitle() {
+                document.title = `${globalOnlineCount}人在线 | 星际远航 Minecraft`;
+                const favicon = document.getElementById('dynamicFavicon');
+                if (favicon) {
+                    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14" fill="#5ef08a"/><text x="16" y="21" text-anchor="middle" fill="#000" font-size="12" font-family="Arial" font-weight="bold">${globalOnlineCount}</text></svg>`;
+                    favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
                 }
             }
-        }
-        
-        // 初始化
-        if (SIMULATE_MANY_PLAYERS) {
-            renderSimulatedData();
-            // 每隔35秒刷新模拟数据（让玩家名单有些变化）
-            setInterval(() => refreshData(false), 35000);
-        } else {
-            refreshData(false);
-            setInterval(() => refreshData(false), 35000);
-        }
-        
-        refreshBtn.addEventListener('click', () => refreshData(true));
-        
-        // 客户端下载按钮
-        document.getElementById('clientDownloadBtn').addEventListener('click', () => {
-            if (CLIENT_DOWNLOAD_URL === "#") {
-                showToast("客户端下载链接失效，请联系管理员", false);
-            } else {
-                window.open(CLIENT_DOWNLOAD_URL, '_blank');
-            }
-        });
-        // QQ交流群按钮
-        document.getElementById('qqGroupBtn').addEventListener('click', () => {
-            if (QQ_GROUP_URL !== "#") {
-                window.open(QQ_GROUP_URL, '_blank');
-            } else {
-                navigator.clipboard.writeText(QQ_NUMBER).then(() => {
-                    showToast(`QQ群号 ${QQ_NUMBER} 已复制，欢迎加入`, true);
-                }).catch(() => showToast("复制失败", false));
-            }
-        });
-        
-        // 图片画廊逻辑
-        let currentDisplayCount = 1;
-        const galleryContainer = document.getElementById('galleryContainer');
-        const showMoreBtn = document.getElementById('showMoreGalleryBtn');
-        function renderGallery() {
-            const itemsToShow = imagesData.slice(0, currentDisplayCount);
-            galleryContainer.innerHTML = '';
-            itemsToShow.forEach((img) => {
-                const div = document.createElement('div');
-                div.className = 'gallery-item';
-                const imgElem = document.createElement('img');
-                imgElem.src = img.url;
-                imgElem.alt = img.alt;
-                imgElem.style.cursor = 'pointer';
-                imgElem.addEventListener('click', () => {
-                    lightboxImg.src = img.url;
-                    lightbox.classList.add('active');
+
+            // 轮播
+            const galleryContainer = document.getElementById('galleryContainer');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const totalSlides = imagesData.length;
+            let currentIndex = 0, isTransitioning = false, transitionTimeout = null;
+            let carouselTrack, arrowLeft, arrowRight, dotElements = [];
+
+            function buildCarouselDOM() {
+                galleryContainer.innerHTML = '';
+                const viewport = document.createElement('div'); viewport.className = 'carousel-viewport';
+                const track = document.createElement('div'); track.className = 'carousel-track'; track.style.transform = 'translateX(0%)';
+                imagesData.forEach(imgData => {
+                    const slide = document.createElement('div'); slide.className = 'carousel-slide';
+                    const img = document.createElement('img'); img.src = imgData.url; img.alt = imgData.alt; img.loading = 'lazy';
+                    img.addEventListener('click', () => { if (isTransitioning) return; lightboxImg.src = imgData.url; lightbox.classList.add('active'); });
+                    slide.appendChild(img); track.appendChild(slide);
                 });
-                div.appendChild(imgElem);
-                galleryContainer.appendChild(div);
-            });
-            showMoreBtn.style.display = (currentDisplayCount >= imagesData.length) ? 'none' : 'inline-flex';
-        }
-        showMoreBtn.addEventListener('click', () => {
-            if (currentDisplayCount < imagesData.length) {
-                currentDisplayCount++;
-                renderGallery();
+                viewport.appendChild(track);
+                const aL = document.createElement('button'); aL.className = 'carousel-arrow carousel-arrow-left carousel-arrow--disabled'; aL.innerHTML = '<i class="fas fa-chevron-left"></i>'; aL.addEventListener('click', e => { e.stopPropagation(); goToPrev(); });
+                const aR = document.createElement('button'); aR.className = 'carousel-arrow carousel-arrow-right'; aR.innerHTML = '<i class="fas fa-chevron-right"></i>'; aR.addEventListener('click', e => { e.stopPropagation(); goToNext(); });
+                viewport.appendChild(aL); viewport.appendChild(aR);
+                const dotsWrap = document.createElement('div'); dotsWrap.className = 'carousel-dots';
+                for (let i = 0; i < totalSlides; i++) { const dot = document.createElement('button'); dot.className = 'carousel-dot'; if (i === 0) dot.classList.add('carousel-dot--active'); dot.addEventListener('click', () => { if (i !== currentIndex && !isTransitioning) goToSlide(i); }); dotsWrap.appendChild(dot); }
+                galleryContainer.appendChild(viewport); galleryContainer.appendChild(dotsWrap);
+                carouselTrack = track; arrowLeft = aL; arrowRight = aR; dotElements = Array.from(dotsWrap.children);
+                bindTouchEvents(viewport);
             }
-        });
-        renderGallery();
-        
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightboxImg');
-        const closeLightbox = document.querySelector('.close-lightbox');
-        closeLightbox.addEventListener('click', () => lightbox.classList.remove('active'));
-        lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.remove('active'); });
-        
-        // 星星背景及鼠标特效
-        function generateStars() {
-            const starsContainer = document.getElementById('starsContainer');
-            if (!starsContainer) return;
-            starsContainer.innerHTML = '';
-            const starCount = window.innerWidth < 800 ? 120 : 220;
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('i');
-                const size = Math.random() * 3 + 1;
-                star.style.width = size + 'px';
-                star.style.height = size + 'px';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 4 + 's';
-                star.style.animationDuration = Math.random() * 2 + 1.5 + 's';
-                star.style.opacity = Math.random() * 0.6 + 0.2;
-                star.style.backgroundColor = `rgba(255, 240, 200, ${Math.random() * 0.8 + 0.2})`;
-                starsContainer.appendChild(star);
+            function updateCarouselUI() { carouselTrack.style.transform = `translateX(-${currentIndex * 100}%)`; arrowLeft.classList.toggle('carousel-arrow--disabled', currentIndex === 0); arrowRight.classList.toggle('carousel-arrow--disabled', currentIndex >= totalSlides - 1); dotElements.forEach((d, i) => d.classList.toggle('carousel-dot--active', i === currentIndex)); }
+            function goToSlide(idx) { if (isTransitioning || idx < 0 || idx >= totalSlides || idx === currentIndex) return; isTransitioning = true; currentIndex = idx; updateCarouselUI(); clearTimeout(transitionTimeout); transitionTimeout = setTimeout(() => { isTransitioning = false; }, 480); }
+            function goToPrev() { if (currentIndex > 0) goToSlide(currentIndex - 1); }
+            function goToNext() { if (currentIndex < totalSlides - 1) goToSlide(currentIndex + 1); }
+            function bindTouchEvents(vp) { let sx = 0, sy = 0; vp.addEventListener('touchstart', e => { sx = e.changedTouches[0].screenX; sy = e.changedTouches[0].screenY; }, { passive: true }); vp.addEventListener('touchend', e => { const dx = e.changedTouches[0].screenX - sx, dy = e.changedTouches[0].screenY - sy; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? goToNext() : goToPrev(); } }, { passive: true }); }
+            document.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') { e.preventDefault(); goToPrev(); } else if (e.key === 'ArrowRight') { e.preventDefault(); goToNext(); } });
+            if (totalSlides > 0) { buildCarouselDOM(); updateCarouselUI(); } else { galleryContainer.innerHTML = '<div style="text-align:center;padding:2rem;opacity:0.6;">暂无图片展示</div>'; }
+            document.querySelector('.close-lightbox').addEventListener('click', () => lightbox.classList.remove('active'));
+            lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('active'); });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape' && lightbox.classList.contains('active')) lightbox.classList.remove('active'); });
+
+            // 进度条 & 返回顶部
+            const progressBar = document.getElementById('progressBar');
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            window.addEventListener('scroll', () => { const scrollTop = window.scrollY; const docHeight = document.documentElement.scrollHeight - window.innerHeight; progressBar.style.width = docHeight > 0 ? (scrollTop / docHeight) * 100 + '%' : '0%'; if (scrollTop > 300) scrollToTopBtn.classList.add('visible'); else scrollToTopBtn.classList.remove('visible'); });
+            scrollToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+            // 星空
+            function generateStars() {
+                const starsContainer = document.getElementById('starsContainer'); if (!starsContainer) return;
+                starsContainer.innerHTML = ''; const starCount = window.innerWidth < 800 ? 120 : 220;
+                for (let i = 0; i < starCount; i++) { const star = document.createElement('i'); const size = Math.random() * 3 + 1; star.style.width = size + 'px'; star.style.height = size + 'px'; star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%'; star.style.animationDelay = Math.random() * 4 + 's'; star.style.animationDuration = Math.random() * 2 + 1.5 + 's'; star.style.opacity = Math.random() * 0.6 + 0.2; star.style.backgroundColor = `rgba(255,240,200,${Math.random() * 0.8 + 0.2})`; starsContainer.appendChild(star); }
             }
-        }
-        generateStars();
-        window.addEventListener('resize', generateStars);
-        
-        let starParticle, moveTimer;
-        document.addEventListener('mousemove', (e) => {
-            if (moveTimer) return;
-            moveTimer = setTimeout(() => {
-                if (starParticle) starParticle.remove();
-                const star = document.createElement('div');
-                star.innerHTML = '✦';
-                star.style.position = 'fixed';
-                star.style.left = e.clientX + 'px';
-                star.style.top = e.clientY + 'px';
-                star.style.fontSize = '20px';
-                star.style.color = '#ffdd99';
-                star.style.textShadow = '0 0 8px orange';
-                star.style.pointerEvents = 'none';
-                star.style.zIndex = '9999';
-                star.style.transition = 'all 0.5s ease';
-                star.style.opacity = '1';
-                star.style.transform = 'translate(-50%, -50%) rotate(0deg)';
-                document.body.appendChild(star);
-                starParticle = star;
-                setTimeout(() => { if(star) star.style.opacity = '0'; setTimeout(() => star?.remove(), 500); }, 80);
-                moveTimer = null;
-            }, 70);
-        });
-        
-        console.log("%c✨ 星际远航 ✨ 实时数据已切换为稳定模拟模式，永不显示离线 | 如需真实状态请修改 SIMULATE_MANY_PLAYERS = false", "color: #ffaa33; font-size: 14px;");
-    })();
-</script>
+            generateStars(); window.addEventListener('resize', generateStars);
+            let starParticle, moveTimer;
+            document.addEventListener('mousemove', e => { if (moveTimer) return; moveTimer = setTimeout(() => { if (starParticle) starParticle.remove(); const star = document.createElement('div'); star.innerHTML = '✦'; star.style.position = 'fixed'; star.style.left = e.clientX + 'px'; star.style.top = e.clientY + 'px'; star.style.fontSize = '20px'; star.style.color = '#ffdd99'; star.style.textShadow = '0 0 8px orange'; star.style.pointerEvents = 'none'; star.style.zIndex = '9999'; star.style.transition = 'all 0.5s ease'; star.style.opacity = '1'; star.style.transform = 'translate(-50%,-50%) rotate(0deg)'; document.body.appendChild(star); starParticle = star; setTimeout(() => { if (star) star.style.opacity = '0'; setTimeout(() => star?.remove(), 500); }, 80); moveTimer = null; }, 70); });
+
+            renderHonorWall();
+            const wasPlaying = localStorage.getItem('starShipMusicPlaying');
+            if (wasPlaying === 'true' || wasPlaying === null) { startMusic(); } else { updateMusicUI(false); }
+            console.log("%c✨ 星际远航 | 全部功能已就绪", "color:#ffaa33; font-size:14px;");
+        })();
+    </script>
 </body>
 </html>
